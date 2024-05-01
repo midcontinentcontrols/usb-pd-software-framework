@@ -16,7 +16,7 @@
 //DOM-IGNORE-BEGIN
 /*******************************************************************************
 
-Copyright © [2022] Microchip Technology Inc. and its subsidiaries.
+Copyright ï¿½ [2022] Microchip Technology Inc. and its subsidiaries.
 
 Subject to your compliance with these terms, you may use Microchip software and
 any derivatives exclusively with Microchip products. It is your responsibility
@@ -47,6 +47,7 @@ HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 // *****************************************************************************
 // *****************************************************************************
 
+#include "Drivers.h"
 
 // *****************************************************************************
 // *****************************************************************************
@@ -94,7 +95,7 @@ Example:
 Remarks:
     User definition of this Hook function is mandatory.                    
 **************************************************************************/
-#define MCHP_PSF_HOOK_UPDHW_INTF_INIT()               0     
+#define MCHP_PSF_HOOK_UPDHW_INTF_INIT()      PSF_APP_SPIInitialisation();              
 
 /*********************************************************************************************
 Function:
@@ -147,7 +148,8 @@ Example:
 Remarks:
     User definition of this Hook function is mandatory                                        
 *********************************************************************************************/
-#define MCHP_PSF_HOOK_UPD_WRITE(u8PortNum,pu8WriteBuf,u8WriteLen)	0
+#define MCHP_PSF_HOOK_UPD_WRITE(u8PortNum,pu8WriteBuf,u8WriteLen) \
+            PSF_APP_SPIWrite(u8PortNum,pu8WriteBuf,u8WriteLen)
 
 /***************************************************************************************
 Function:
@@ -218,7 +220,8 @@ Example:
 Remarks:
     User definition of this Hook function is mandatory.                                 
 ***************************************************************************************/
-#define MCHP_PSF_HOOK_UPD_READ(u8PortNum,pu8WriteBuf,u8WriteLen,pu8ReadBuf, u8ReadLen)	0
+#define MCHP_PSF_HOOK_UPD_READ(u8PortNum,pu8WriteBuf,u8WriteLen,pu8ReadBuf, u8ReadLen)\
+            PSF_APP_SPIRead(u8PortNum,pu8WriteBuf,u8WriteLen,pu8ReadBuf, u8ReadLen)
 
 
 // *****************************************************************************
@@ -256,7 +259,7 @@ Example:
 Remarks:
     User definition of this Hook function is mandatory                  
 ***********************************************************************/			      
-#define MCHP_PSF_HOOK_HW_PDTIMER_INIT()		0
+#define MCHP_PSF_HOOK_HW_PDTIMER_INIT()   PSF_APP_HWTimerInit()
 
 /**************************************************************************************************
 Summary:
@@ -294,8 +297,7 @@ Example :
       #define MCHP_PSF_CONFIG_16BIT_PDTIMER_COUNTER	0 (Sets timeout variable inside the PSF as unsigned 32bit)
     </code>
 **************************************************************************************************/
-#define MCHP_PSF_CONFIG_16BIT_PDTIMER_COUNTER	0
-
+#define MCHP_PSF_CONFIG_16BIT_PDTIMER_COUNTER     1
 
 // *****************************************************************************
 // *****************************************************************************
@@ -329,7 +331,7 @@ Example:
 Remarks:
     User definition of this Hook function is mandatory                            
 *********************************************************************************/
-#define MCHP_PSF_HOOK_DISABLE_GLOBAL_INTERRUPT()           
+#define MCHP_PSF_HOOK_DISABLE_GLOBAL_INTERRUPT()  PSF_APP_EnterCriticalSection()             
 
 /*******************************************************************************
 Function:
@@ -358,7 +360,7 @@ Example:
 Remarks:
 User definition of this Hook function is mandatory                          
 *******************************************************************************/                           
-#define MCHP_PSF_HOOK_ENABLE_GLOBAL_INTERRUPT()
+#define MCHP_PSF_HOOK_ENABLE_GLOBAL_INTERRUPT()     PSF_APP_ExitCriticalSection()
 
 // *****************************************************************************
 // *****************************************************************************
@@ -389,7 +391,7 @@ Example:
 Remarks:
     User definition of this Hook function is mandatory                   
 ************************************************************************/
-#define MCHP_PSF_HOOK_MEMCMP(pObj1, pObj2, iLength)       0                   
+#define MCHP_PSF_HOOK_MEMCMP(pObj1, pObj2, iLength) PSF_APP_MemCmp (pObj1, pObj2, iLength)                          
 
 /**************************************************************************
 Function:
@@ -415,7 +417,7 @@ Example:
 Remarks:
     User definition of this Hook function is mandatory                     
 **************************************************************************/
-#define MCHP_PSF_HOOK_MEMCPY(pDest, pSrc, iLen) 	0
+#define MCHP_PSF_HOOK_MEMCPY(pDest, pSrc, iLen) PSF_APP_MemCpy (pDest, pSrc, iLen)
 
 // *****************************************************************************
 // *****************************************************************************
@@ -438,7 +440,7 @@ Example:
         #define MCHP_PSF_STRUCT_PACKED_START   __attribute__((__packed__)) 
     </code>
 **************************************************************************************************/
-#define MCHP_PSF_STRUCT_PACKED_START
+#define MCHP_PSF_STRUCT_PACKED_START   __attribute__((packed, aligned(4)))
 
 /**************************************************************************************************
 Summary:
@@ -494,7 +496,7 @@ Example:
   Remarks:
     User definition of this Hook function is mandatory                                          
   *********************************************************************************************/
-#define  MCHP_PSF_HOOK_BOOT_TIME_CONFIG(pasCfgStatusData)  	
+#define  MCHP_PSF_HOOK_BOOT_TIME_CONFIG(pasCfgStatusData)       PSF_LoadConfig (pasCfgStatusData)
 
 // *****************************************************************************
 // *****************************************************************************
@@ -563,7 +565,8 @@ Example:
 Remarks:
     User definition of this Hook function is mandatory when CONFIG_HOOK_DEBUG_MSG is declared as '1'.                  
 ***********************************************************************/  
-#define MCHP_PSF_HOOK_DEBUG_INIT()   
+/*SERCOM1_USART_Initialize is handled specific to the application used */
+#define MCHP_PSF_HOOK_DEBUG_INIT()  PSF_DEBUG_INIT() 
 
 /***********************************************************************
 Function:
@@ -590,7 +593,8 @@ Remarks:
     This hook API can be used only if CONFIG_HOOK_DEBUG_MSG is 1.                 
 ***********************************************************************/  
 
-#define MCHP_PSF_HOOK_PRINT_CHAR(byData)    
+#define MCHP_PSF_HOOK_PRINT_CHAR(byData)    PSF_APP_UART_Write_Char (byData);
+
 
 /***********************************************************************
 Function:
@@ -618,7 +622,8 @@ Example:
 Remarks:
     This hook API can be used only if CONFIG_HOOK_DEBUG_MSG is 1.                 
 ***********************************************************************/  
-#define MCHP_PSF_HOOK_PRINT_INTEGER(dwWriteInt, byWidth)    
+#define MCHP_PSF_HOOK_PRINT_INTEGER(dwWriteInt, byWidth)    PSF_APP_UART_Write_Int (dwWriteInt, byWidth);
+
 
 /***********************************************************************
 Function:
@@ -645,8 +650,8 @@ Example:
 Remarks:
     This hook API can be used only if CONFIG_HOOK_DEBUG_MSG is 1.                 
 ***********************************************************************/ 
-#define MCHP_PSF_HOOK_PRINT_TRACE(pbyMessage) 
-	
+#define MCHP_PSF_HOOK_PRINT_TRACE(pbyMessage)  PSF_APP_UART_Write_String (pbyMessage);
+
 #else
     #define MCHP_PSF_HOOK_DEBUG_INIT() 
     #define MCHP_PSF_HOOK_PRINT_CHAR(byData)
@@ -1330,7 +1335,7 @@ Example:
 Remarks:
     User definition of this Hook function is mandatory                                                
 ****************************************************************************************************/
-#define MCHP_PSF_NOTIFY_CALL_BACK(u8PortNum, ePSFNotification)
+#define MCHP_PSF_NOTIFY_CALL_BACK(u8PortNum, ePSFNotification)   App_HandlePSFEvents (u8PortNum, ePSFNotification)
  
 /**************************************************************************************************************
   Section:
@@ -1568,7 +1573,7 @@ Example:
 Remarks:
     User definition of this Hook function is mandatory as well as it is mandatory to define functionality for ePSF_GPIO_Functionality.
  **************************************************************************/
-#define MCHP_PSF_HOOK_GPIO_FUNC_INIT(u8PortNum, eGPIOFunc)
+#define MCHP_PSF_HOOK_GPIO_FUNC_INIT(u8PortNum, eGPIOFunc) App_GPIOControl_Init (u8PortNum, eGPIOFunc)
 
 /**************************************************************************
 Function:
@@ -1630,7 +1635,8 @@ Remarks:
     User definition of this Hook function is mandatory as well as it is mandatory 
     to define functionality for eMCHP_PSF_GPIO_FUNCTIONALITY.
  *************************************************************************/
-#define MCHP_PSF_HOOK_GPIO_FUNC_DRIVE(u8PortNum, eGPIOFunc, eDriveVal)
+#define MCHP_PSF_HOOK_GPIO_FUNC_DRIVE(u8PortNum, eGPIOFunc, eDriveVal) \
+App_GPIOControl_Drive (u8PortNum, eGPIOFunc, eDriveVal)
 
 // *****************************************************************************
 // *****************************************************************************
@@ -1668,8 +1674,9 @@ Remarks:
     User definition of this Hook function is mandatory.
     A DAC may initialized under this hook if PSF is configured as SINK.                        
 *****************************************************************************/
-#define MCHP_PSF_HOOK_HW_PORTPWR_INIT(u8PortNum)                                                     
 
+#define MCHP_PSF_HOOK_HW_PORTPWR_INIT(u8PortNum)  App_PortPowerInit (u8PortNum)
+                                                   
 /****************************************************************************
 Function:
     MCHP_PSF_HOOK_PORTPWR_DRIVE_VBUS(u8PortNum, u16VBUSVoltage, u16Current)
@@ -1702,7 +1709,8 @@ Remarks:
     User definition of this Hook function is mandatory.                      
 ****************************************************************************/
 
-#define MCHP_PSF_HOOK_PORTPWR_DRIVE_VBUS(u8PortNum,u16VBUSVolatge,u16Current)   \
+#define MCHP_PSF_HOOK_PORTPWR_DRIVE_VBUS(u8PortNum,u16VBUSVoltage,u16Current)   \
+        App_PortPowerSetPower (u8PortNum, u16VBUSVoltage, u16Current)
 
 /*******************************************************************************************
 Function:
@@ -1811,7 +1819,7 @@ Remarks:
     This hook is applicable only if INCLUDE_PD_SINK macro is 1. Definition of this
     hook is not mandatory. This is applicable only for Sink operation.
 *******************************************************************************/ 
-#define MCHP_PSF_HOOK_DRIVE_DAC_I(u8PortNum, u16DACData)  
+#define MCHP_PSF_HOOK_DRIVE_DAC_I(u8PortNum, u16DACData)  App_DriveDAC_I (u8PortNum, u16DACData)
 
 /*******************************************************************************
 Function:

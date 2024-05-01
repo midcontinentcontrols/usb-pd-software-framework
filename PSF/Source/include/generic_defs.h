@@ -37,6 +37,10 @@ HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 #define FALSE                                     0
 #define TRUE                                      1
 
+#ifndef NULL
+#define NULL                                      ((void*)0)
+#endif
+
 /* Unsigned integers */
 #define UINT8                                     unsigned char
 #define UINT16                                    unsigned short
@@ -57,7 +61,9 @@ HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 #define SIZEOF(x)                                 sizeof(x)
 /********************************************************************************************/
 /* To obtain equivalent value from BIT position*/
+#ifndef BIT
 #define BIT(x)                                   (1UL << x)
+#endif
 
 /* Data Size */ 
 #define BYTE_LEN_1			        			1
@@ -116,8 +122,13 @@ HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
                                             (((UINT32)u8HiWordLoByte) << 16) 		|\
                                             (((UINT32)u8HiWordHiByte) << 24u))
 
+#ifndef MIN
 #define MIN(a,b) (((a) < (b)) ? (a) : (b))	/* Returns the minimum of two */
+#endif
+
+#ifndef MAX
 #define MAX(a,b) ((a) > (b) ? (a) : (b))	/* Returns the maximum of two */
+#endif
 
 /* Extract first decimal value in a floating point number */
 #define NO_OF_DECIMAL_POINTS_PRECISION          10 
