@@ -31,125 +31,96 @@ RELATED TO THIS SOFTWARE WILL NOT EXCEED THE AMOUNT OF FEES, IF ANY, THAT YOU
 HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 *******************************************************************************/
 #include <psf_stdinc.h>
+#include <zephyr/kernel.h>
+
+typedef struct pd_timer_data {
+    struct k_work work;
+    struct k_timer timer;
+    uint8_t timer_id;
+} pd_timer_data_t;
+
+static pd_timer_data_t _pd_timer_data[MAX_CONCURRENT_TIMERS];
+
+static void pd_timer_workq_handler(struct k_work* work) {
+    pd_timer_data_t* data = CONTAINER_OF(work, pd_timer_data_t, work);
+
+    // Setting the timer state as "Timer Expired"
+    gasPDTimers[data->timer_id].u8TimerStPortNum &= ~PDTIMER_STATE;
+    gasPDTimers[data->timer_id].u8TimerStPortNum |= PDTIMER_EXPIRED;
+    
+    __ASSERT(gasPDTimers[data->timer_id].pfnTimerCallback != NULL, "PD Timer %u callback is null.", data->timer_id);
+
+    // Execute callback OUTSIDE of IRQ context
+    gasPDTimers[data->timer_id].pfnTimerCallback(
+        gasPDTimers[data->timer_id].u8TimerStPortNum & PDTIMER_PORT_NUM, 
+        gasPDTimers[data->timer_id].u8PDState
+    );
+    printk("timer %u executed\n", data->timer_id);
+}
+
+static void pd_timer_expiry_handler(struct k_timer* timer) {
+    pd_timer_data_t* data = CONTAINER_OF(timer, pd_timer_data_t, timer);
+    k_work_submit(&data->work);
+}
 
 /*******************************************************************************/
-UINT8 PDTimer_Init ()
-{
-	/*Setting all the PD Software timer's state to Non Active during PD stack initialization*/
-
-	for (UINT8 u8TimerID = SET_TO_ZERO; u8TimerID < MAX_CONCURRENT_TIMERS; u8TimerID++)
-	{
+UINT8 PDTimer_Init() {
+	// Setting all the PD Software timer's state to Non Active during PD stack initialization
+	for (UINT8 u8TimerID = SET_TO_ZERO; u8TimerID < MAX_CONCURRENT_TIMERS; u8TimerID++) {
 		gasPDTimers[u8TimerID].u8TimerStPortNum = RESET_TO_ZERO;
+        k_timer_init(&_pd_timer_data[u8TimerID].timer, pd_timer_expiry_handler, NULL);
+        k_work_init(&_pd_timer_data[u8TimerID].work, pd_timer_workq_handler);
 	}
     
-    /*MCHP_PSF_HOOK_HW_PDTIMER_INIT() will configure and start the hardware timer on 
-    the MCU to generate periodic interrupts*/
-    
-	return MCHP_PSF_HOOK_HW_PDTIMER_INIT();
+	return TRUE;
 }
 /*******************************************************************************/
 
-UINT8 PDTimer_Start (UINT32 u32TimeoutTicks, PDTimerCallback pfnTimerCallback, \
-                                UINT8 u8PortNum, UINT8 u8PDState)
-{
+UINT8 PDTimer_Start(UINT32 u32TimeoutTicks, PDTimerCallback pfnTimerCallback, UINT8 u8PortNum, UINT8 u8PDState) {
 	UINT8 u8TimerID;
     
-    /*u32TimeoutTicks is incremented by 1 to make sure guaranteed timer wait is provided*/
+    // u32TimeoutTicks is incremented by 1 to make sure guaranteed timer wait is provided
     u32TimeoutTicks++;
     
-    /*Find the unused PD Software timer and start the given timeout value with the found timer*/    
-	for (u8TimerID = SET_TO_ZERO; u8TimerID < MAX_CONCURRENT_TIMERS; u8TimerID++)
-	{
-		if (((gasPDTimers[u8TimerID].u8TimerStPortNum & PDTIMER_STATE ) == PDTIMER_NON_ACTIVE) || \
-                ((gasPDTimers[u8TimerID].u8TimerStPortNum & PDTIMER_STATE)== PDTIMER_EXPIRED))
+    // Find the unused PD Software timer and start the given timeout value with the found timer
+	for (u8TimerID = SET_TO_ZERO; u8TimerID < MAX_CONCURRENT_TIMERS; u8TimerID++) {
+		if  (((gasPDTimers[u8TimerID].u8TimerStPortNum & PDTIMER_STATE) == PDTIMER_NON_ACTIVE) ||
+             ((gasPDTimers[u8TimerID].u8TimerStPortNum & PDTIMER_STATE) == PDTIMER_EXPIRED))
 		{
-
-            #if (TRUE == MCHP_PSF_CONFIG_16BIT_PDTIMER_COUNTER)
+#if (TRUE == MCHP_PSF_CONFIG_16BIT_PDTIMER_COUNTER)
                 gasPDTimers[u8TimerID].u16TimeoutTickCnt = (UINT16)u32TimeoutTicks;
-            #else
+#else
                 gasPDTimers[u8TimerID].u32TimeoutTickCnt = u32TimeoutTicks;
-            #endif
+#endif
 
-            /*Store the callback function address and arguments to be passed in the PD Software 
-            timer structure*/
+            //Store the callback function address and arguments to be passed in the PD Software timer structure
 			gasPDTimers[u8TimerID].pfnTimerCallback = pfnTimerCallback;
 			gasPDTimers[u8TimerID].u8TimerStPortNum = (u8PortNum & PDTIMER_PORT_NUM);
 			gasPDTimers[u8TimerID].u8PDState = u8PDState;
             
-            /*Setting the PD Software timer state to "Active"*/
+            //Setting the PD Software timer state to "Active"
 			gasPDTimers[u8TimerID].u8TimerStPortNum &= ~PDTIMER_STATE;
             gasPDTimers[u8TimerID].u8TimerStPortNum |= PDTIMER_ACTIVE;
+            k_timer_start(&_pd_timer_data[u8TimerID].timer, K_MSEC(gasPDTimers[u8TimerID].u16TimeoutTickCnt), K_NO_WAIT);
             break;
 		}
 	}
 	return u8TimerID;
 }
 /**************************************************************************************/
-void PDTimer_WaitforTicks (UINT32 u32TimeoutTicks)
-{
-    UINT8 u8TimerID;
-    
-    /*u32TimeoutTicks is incremented by 1 to make sure guaranteed timer wait is provided*/
-    ++u32TimeoutTicks;
-    
-    /*Find the unused PD Software timer and start the given timeout value with the found timer*/    
-	for (u8TimerID = SET_TO_ZERO; u8TimerID < MAX_CONCURRENT_TIMERS; u8TimerID++)
-	{
-
-		if (((gasPDTimers[u8TimerID].u8TimerStPortNum & PDTIMER_STATE ) == PDTIMER_NON_ACTIVE) || ((gasPDTimers[u8TimerID].u8TimerStPortNum & PDTIMER_STATE)== PDTIMER_EXPIRED))
-		{
-
-#if (TRUE == MCHP_PSF_CONFIG_16BIT_PDTIMER_COUNTER)
-
-			gasPDTimers[u8TimerID].u16TimeoutTickCnt = (UINT16)u32TimeoutTicks;
-#else
-			gasPDTimers[u8TimerID].u32TimeoutTickCnt = u32TimeoutTicks;
-#endif
-            /*Setting the PDTimer Call back function as NULL*/
-            gasPDTimers[u8TimerID].pfnTimerCallback = NULL;
-            
-            /*Setting the PD Software timer state to "Active"*/
-			gasPDTimers[u8TimerID].u8TimerStPortNum &= ~PDTIMER_STATE;
-            gasPDTimers[u8TimerID].u8TimerStPortNum |= PDTIMER_ACTIVE;
-            
-            do
-            {
-                /*Wait here until the Timer state changes to Timer Expired*/
-              
-            }while((gasPDTimers[u8TimerID].u8TimerStPortNum & PDTIMER_STATE) == PDTIMER_ACTIVE);
-          
-            break;
-        }        
-    }
-    
-}
 
 /**************************************************************************************/
-void PDTimer_Kill (UINT8 u8TimerID)
-{  
-   /*Disabling Global interrupts, So that Timer Variable will not be corrupted by the 
-   PDTimer ISR Handler*/       
-   MCHP_PSF_HOOK_DISABLE_GLOBAL_INTERRUPT();
-   
-    if (u8TimerID < MAX_CONCURRENT_TIMERS)
-    {       
-        /*Setting the PD Software timer to "Non Active"  state will disable the PDTimer 
-        ISR Handler from calling the callback function*/
+void PDTimer_Kill(UINT8 u8TimerID) {
+    if (u8TimerID < MAX_CONCURRENT_TIMERS) {       
+        //Setting the PD Software timer to "Non Active"
         gasPDTimers[u8TimerID].u8TimerStPortNum &= ~PDTIMER_STATE;
-        gasPDTimers[u8TimerID].pfnTimerCallback = NULL;        
-        
+        gasPDTimers[u8TimerID].pfnTimerCallback = NULL;
+        k_timer_stop(&_pd_timer_data[u8TimerID].timer);
     }
-	/*Enabling the Global interrupts*/
-	MCHP_PSF_HOOK_ENABLE_GLOBAL_INTERRUPT();    
 }
 /**************************************************************************************/
-void PDTimer_KillPortTimers (UINT8 u8PortNum)
-{
-	/*Disabling Global interrupts, So that Timer Variable will not be 
-    corrupted by the PDTimer ISR Handler*/
-	MCHP_PSF_HOOK_DISABLE_GLOBAL_INTERRUPT();
-	
-    /* Resetting all the module's TimerID globals */
+void PDTimer_KillPortTimers(UINT8 u8PortNum) {
+    // Resetting all the module's TimerID globals
 	gasPolicyEngine[u8PortNum].u8PETimerID = MAX_CONCURRENT_TIMERS;
 	gasTypeCcontrol[u8PortNum].u8TypeCTimerID = MAX_CONCURRENT_TIMERS;
     #if (TRUE == INCLUDE_PD_3_0)
@@ -187,72 +158,26 @@ void PDTimer_KillPortTimers (UINT8 u8PortNum)
     gasDPM[u8PortNum].u8AMETmrID = MAX_CONCURRENT_TIMERS;
     #endif 
 
-    /*Setting the PD Software timers of a given port number to "Non Active"  state will disable 
-    the PDTimer ISR Handler from calling the callback function*/
-    for (UINT8 u8TimerID = SET_TO_ZERO; u8TimerID < MAX_CONCURRENT_TIMERS; u8TimerID++)
-    {
-        if (((gasPDTimers[u8TimerID].u8TimerStPortNum & PDTIMER_STATE) == PDTIMER_ACTIVE)\
-          && ((gasPDTimers[u8TimerID].u8TimerStPortNum & PDTIMER_PORT_NUM) == u8PortNum)
-            
+    //Setting the PD Software timers of a given port number to "Non Active"
+    for (UINT8 u8TimerID = SET_TO_ZERO; u8TimerID < MAX_CONCURRENT_TIMERS; u8TimerID++) {
+        if  (((gasPDTimers[u8TimerID].u8TimerStPortNum & PDTIMER_STATE) == PDTIMER_ACTIVE) &&
+             ((gasPDTimers[u8TimerID].u8TimerStPortNum & PDTIMER_PORT_NUM) == u8PortNum)
 #if (TRUE == INCLUDE_POWER_MANAGEMENT_CTRL)
-			/*If power management is active don't kill IDLE Timer*/
+			// If power management is active don't kill IDLE Timer
             && (u8TimerID != gau8PortIdleTimerID[u8PortNum])
 #endif
-              )
+            )
         {
-            /*Setting the Timer state to inactive*/
+            // Setting the Timer state to inactive
             gasPDTimers[u8TimerID].u8TimerStPortNum &= ~PDTIMER_STATE;
             gasPDTimers[u8TimerID].pfnTimerCallback = NULL;
+            k_timer_stop(&_pd_timer_data[u8TimerID].timer);
         }
     }
 	/*Enabling the Global interrupts*/
-	MCHP_PSF_HOOK_ENABLE_GLOBAL_INTERRUPT();
 }
 /**************************************************************************************/
 
-void PDTimer_InterruptHandler (void)
-{
-	MCHP_PSF_HOOK_DISABLE_GLOBAL_INTERRUPT();
-	
-	for (UINT8 u8TimerID = SET_TO_ZERO; u8TimerID < MAX_CONCURRENT_TIMERS; u8TimerID++)
-	{
-         
-      /*Checking for a "Active" State PD Software timer*/
-      
-		if (((gasPDTimers[u8TimerID].u8TimerStPortNum & PDTIMER_STATE) == PDTIMER_ACTIVE))
-		{
-			
-#if (TRUE == MCHP_PSF_CONFIG_16BIT_PDTIMER_COUNTER)
-
-       /*If the Timeout_Tickcnt value is 0, then the timer has expired*/
-          
-			if (--gasPDTimers[u8TimerID].u16TimeoutTickCnt == SET_TO_ZERO)
-			{
-#else
-			
-			if (--gasPDTimers[u8TimerID].u32TimeoutTickCnt == SET_TO_ZERO)
-			{
-#endif
-				
-				if (gasPDTimers[u8TimerID].pfnTimerCallback != NULL)
-				{
-                    /*Calling the callback function with a set of arguments 
-                    namely port number and PD state*/
-					gasPDTimers[u8TimerID].pfnTimerCallback((gasPDTimers[u8TimerID].u8TimerStPortNum & PDTIMER_PORT_NUM), gasPDTimers[u8TimerID].u8PDState);
-
-                    /* Hook to notify that PSF stack is not idle */
-                    MCHP_PSF_HOOK_PDTIMER_EVENT();
-				}
-				
-				/*Setting the timer state as "Timer Expired"*/
-				gasPDTimers[u8TimerID].u8TimerStPortNum &= ~PDTIMER_STATE;
-                gasPDTimers[u8TimerID].u8TimerStPortNum |= PDTIMER_EXPIRED;   				
-			}
-		}
-	}
-	
-	MCHP_PSF_HOOK_ENABLE_GLOBAL_INTERRUPT();
-}
 /**************************************************************************************/
     
  
