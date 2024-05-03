@@ -139,43 +139,38 @@ void DPM_InitStateMachine (void)
 }
 /*******************************************************************************/
 
-#include <zephyr/kernel.h>
-
 void DPM_RunStateMachine (UINT8 u8PortNum)
 {
-    printk("DPM_RunStateMachine 1\n");
     MCHP_PSF_HOOK_DPM_PRE_PROCESS(u8PortNum);       
-    printk("DPM_RunStateMachine 2\n");
     /* Handle Client Requests if any */
     DPM_ClientRequestHandler (u8PortNum);
-    printk("DPM_RunStateMachine 3\n");
+
     /* Handle Internal Events if any */
     DPM_InternalEventHandler (u8PortNum);
-    printk("DPM_RunStateMachine 4\n");
+
 	/* Handle Power Faults if any */
 	#if (TRUE == INCLUDE_POWER_FAULT_HANDLING)
 		DPM_PowerFaultHandler (u8PortNum);
 	#endif
-    printk("DPM_RunStateMachine 5\n");
+
     /* Handle Generic events if any */  
     DPM_GenericEventHandler (u8PortNum);
-    printk("DPM_RunStateMachine 6\n");
+
     /* Handle Power Throttling Bank Switch */
     #if (TRUE == INCLUDE_POWER_THROTTLING)
         PT_HandleBankSwitch (u8PortNum);
     #endif          
-    printk("DPM_RunStateMachine 7\n");
+
     /* Run Type C State machine*/
     TypeC_RunStateMachine (u8PortNum);
-    printk("DPM_RunStateMachine 8\n");
+
     /* Run Policy engine State machine*/
     PE_RunStateMachine (u8PortNum);  
-    printk("DPM_RunStateMachine 9\n");
+
     /* UPD Power Management */
     #if (TRUE == INCLUDE_POWER_MANAGEMENT_CTRL)
         UPD_PwrManagementCtrl (u8PortNum);
     #endif
-    printk("DPM_RunStateMachine 10\n");
 }
 
 /*********************************************************************************/

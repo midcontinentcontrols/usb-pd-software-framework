@@ -151,7 +151,6 @@ void MchpPSF_RUN()
   	{
         if (UPD_PORT_ENABLED == DPM_GET_CONFIGURED_PORT_EN(u8PortNum))
         {
-            printk("MchpPSF_RUN port %u", u8PortNum);
            DPM_RunStateMachine (u8PortNum);
         }
 	}
@@ -162,5 +161,12 @@ void MchpPSF_RUN()
 void MchpPSF_UPDIrqHandler (UINT8 u8PortNum)
 {
     UPDIntr_AlertHandler (u8PortNum);
+}
+/*********************************************************************************************/
+
+/*********************************************************************************************/
+void MchpPSF_PDTimerHandler (void)
+{
+    PDTimer_InterruptHandler ();
 }
 /*********************************************************************************************/

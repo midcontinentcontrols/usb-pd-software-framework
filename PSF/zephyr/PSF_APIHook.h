@@ -983,6 +983,26 @@ Remarks:
 **************************************************************************************************/
 void MchpPSF_UPDIrqHandler (UINT8 u8PortNum);
 
+/**************************************************************************************************
+Function:
+    void MchpPSF_PDTimerHandler (void)
+Summary:
+    PD Timer Interrupt Handler 
+Description:
+    This API is used to handle the PD Timer (Software timer) Interrupt, User should call this 
+    API whenever the hardware timer interrupt triggered. 
+Conditions:
+    This API should be called inside the Hardware timer ISR. 
+Input:
+    None
+Return:
+    None
+Remarks:
+    With SAMD20 environment configured for CPU frequency 48MHZ, this API took maximum of 262us  
+	execution time for both 1 and 2 port solution.
+**************************************************************************************************/
+void MchpPSF_PDTimerHandler (void);
+
 // *****************************************************************************
 // *****************************************************************************
 // Section:  Notification callback from PSF
