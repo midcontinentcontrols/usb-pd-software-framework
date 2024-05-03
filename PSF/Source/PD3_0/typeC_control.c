@@ -32,6 +32,7 @@ HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 *******************************************************************************/
 
 #include <psf_stdinc.h>
+#include <zephyr/kernel.h>
 
 /*Default values given in the UPD350 datasheet to program the CC threshold registers*/
 const UINT16 u16aCCThrVal[] = { TYPEC_CC_THR0_VAL, 
@@ -167,25 +168,27 @@ void TypeC_InitPort (UINT8 u8PortNum)
 	UINT16 u16Data;
     UINT8 u8MatchDebVal;
     UINT8 u8VBUSDebVal; 
+
+    printk("TypeC_InitPort 1\n");
     
 	/*Setting CC Comparator OFF*/
     TypeC_ConfigCCComp (u8PortNum, TYPEC_CC_COMP_CTL_DIS);
-    
+    printk("TypeC_InitPort 2\n");
     /*Setting VBUS Comparator OFF*/
     TypeC_SetVBUSCompONOFF (u8PortNum, TYPEC_VBUSCOMP_OFF);
- 
+ printk("TypeC_InitPort 3\n");
 	/*Enabling the CC Interrupts in CC_INT_EN register (TYPEC_CC_MATCH_VLD, TYPEC_CC1_MATCH_CHG and 
     TYPEC_CC2_MATCH_CHG interrupt)*/   
     UPD_RegByteSetBit (u8PortNum, TYPEC_CC_INT_EN,\
                       (UINT8)(TYPEC_CC1_MATCH_CHG | TYPEC_CC2_MATCH_CHG | TYPEC_CC_MATCH_VLD));	
-    
+    printk("TypeC_InitPort 4\n");
     /* Setting VSinkDisconnect value in VBUS THR0*/
     UPD_RegWriteWord (u8PortNum, TYPEC_VBUS_THR0, \
       (UINT16)((float)TYPEC_VSINKDISCONNECT_THR * gasTypeCcontrol[u8PortNum].fVBUSCorrectionFactor));
-		
+		printk("TypeC_InitPort 5\n");
 	/*Setting VBUS_BLK_EN bit in VBUS Control 2 Register*/
     UPD_RegByteSetBit (u8PortNum, TYPEC_VBUS_CTL2, TYPEC_VBUS_DEB_BLK_EN);
- 
+ printk("TypeC_InitPort 6 role %u\n", DPM_GET_CURRENT_POWER_ROLE(u8PortNum));
 	switch (DPM_GET_CURRENT_POWER_ROLE(u8PortNum))
     {
       
@@ -199,26 +202,28 @@ void TypeC_InitPort (UINT8 u8PortNum)
             /*Setting VBUS Debounce period in VBUS Debounce Register as 2 times the number of 
             thresholds enabled for debouncing */
             u8VBUSDebVal = (BYTE_LEN_4 * TYPEC_SRC_VBUSTHRES_CNT);         
-            					
+            					printk("TypeC_InitPort 7\n");
             /*Write CCx Debounce clear enable register, CCx Match Enable register, 
             CCx sample enable register*/            
             TypeC_SetCCDebounceVariable (u8PortNum, DPM_GET_CONFIGURED_SOURCE_RP_VAL(u8PortNum));
-            
+            printk("TypeC_InitPort 8\n");
             /*Setting Port Role as DFP in TYPEC_CC_HW_CTL register*/
             TypeC_SetCCDeviceRole (u8PortNum,PD_ROLE_DFP);
-            
+            printk("TypeC_InitPort 9\n");
             /* Clear TypeC Current Rp Val bits in u8PortSts*/
             gasTypeCcontrol[u8PortNum].u8PortSts &= ~TYPEC_CURR_RPVAL_MASK;
             
             if (FALSE == (gasCfgStatusData.sPerPortData[u8PortNum].u32ClientRequest & DPM_CLIENT_REQ_PORT_DISABLE))
             {      
+                printk("TypeC_InitPort 10\n");
 	            /*Setting Rp Current Source as user given and Rd as Open disconnect in both CC1 and 
 	            CC2*/ 
 	            u16Data = DPM_GET_CONFIGURED_SOURCE_RP_VAL(u8PortNum);
+                printk("TypeC_InitPort 10a\n");
             
 	            /*Setting the Power role as Source*/
 	            TypeC_SetCCPowerRole (u8PortNum, TYPEC_ROLE_SOURCE, (UINT8) u16Data, TYPEC_ENABLE_CC1_CC2);
-            
+                printk("TypeC_InitPort 10b\n");
 	            /*Setting the Current Rp value status in u8PortSts variable as user given Rp value*/
 	            gasTypeCcontrol[u8PortNum].u8PortSts |= (u16Data << TYPEC_CURR_RPVAL_POS);
             
@@ -228,6 +233,7 @@ void TypeC_InitPort (UINT8 u8PortNum)
             }
             else
             {
+                printk("TypeC_InitPort 11\n");
                 /*Setting the CC1 and CC2 line as Open Disconnect*/
                 TypeC_SetCCPowerRole (u8PortNum, PD_ROLE_SOURCE, TYPEC_ROLE_SOURCE_OPEN_DIS, TYPEC_ENABLE_CC1_CC2);
                 
@@ -289,43 +295,48 @@ void TypeC_InitPort (UINT8 u8PortNum)
 		break;  
 	}
 
+    printk("TypeC_InitPort 12\n");
+
     /*Setting Match debounce register */
     UPD_RegisterWrite (u8PortNum, TYPEC_MATCH_DEB, &u8MatchDebVal, BYTE_LEN_1);	
-    
+    printk("TypeC_InitPort 13\n");
     /*Setting VBUS Debounce period in VBUS Debounce Register*/
     UPD_RegisterWrite (u8PortNum, TYPEC_VBUS_DEB, &u8VBUSDebVal, BYTE_LEN_1);
-    
+    printk("TypeC_InitPort 14\n");
     /*Setting the CC Debounce register to detect both the sink and powered cable on CC1 and CC2*/
     TypeC_SetCCSampleEnable (u8PortNum, TYPEC_ENABLE_CC1_CC2);
-  
+  printk("TypeC_InitPort 15\n");
     /*Setting VCONN Debounce register for 2ms as given in DOS*/
     UPD_RegWriteByte (u8PortNum, TYPEC_VCONN_DEB, gasCfgStatusData.sPerPortData[u8PortNum].u8VCONNOCSDebounceInms);
-     
+     printk("TypeC_InitPort 16\n");
     
     /*Setting VBUS Debounce enable clear register and VBUS Match Enable Register */
 	u16Data = (TYPEC_VBUS_VSAFE0V_MATCH | TYPEC_VBUS_THRES0_MATCH | TYPEC_VBUS_THRES1_MATCH |\
                     TYPEC_VBUS_THRES2_MATCH | TYPEC_VBUS_THRES3_MATCH | TYPEC_VBUS_THRES4_MATCH);
 	UPD_RegisterWrite (u8PortNum, TYPEC_VBUS_MATCH_EN, (UINT8*)&u16Data, BYTE_LEN_1);
+    printk("TypeC_InitPort 17\n");
 	UPD_RegisterWrite (u8PortNum, TYPEC_VBUS_DBCLR_EN, (UINT8*)&u16Data, BYTE_LEN_1);
-    
+    printk("TypeC_InitPort 18\n");
     /*Setting VBUS Comparator ON*/
     TypeC_SetVBUSCompONOFF (u8PortNum, TYPEC_VBUSCOMP_ON);
-
+    printk("TypeC_InitPort 19\n");
 #if(TRUE == INCLUDE_PD_DRP)
     /*Disable DRP offload.*/
     UPD_RegByteClearBit (u8PortNum, TYPEC_DRP_CTL_LOW, TYPEC_DRP_EN);
 #endif
-
+    printk("TypeC_InitPort 20\n");
     /*Setting CC Comparator ON*/
     TypeC_ConfigCCComp (u8PortNum, TYPEC_CC_COMP_CTL_CC1_CC2);    
-    
+    printk("TypeC_InitPort 21\n");
     /*Setting the Power Module as per the port role*/
     if (PD_ROLE_SOURCE == DPM_GET_CURRENT_POWER_ROLE(u8PortNum))
     {
+        
         /*Setting the VBUS to vSafe0V before entering the State machine*/
         #if (TRUE == INCLUDE_PD_SOURCE)
             DPM_DriveVBUS (u8PortNum, DPM_VBUS_OFF);
         #endif 
+        printk("TypeC_InitPort 22a\n");
     }
     else
     {
@@ -333,7 +344,9 @@ void TypeC_InitPort (UINT8 u8PortNum)
         #if (TRUE == INCLUDE_PD_SINK)        
             PWRCTRL_ConfigSinkHW (u8PortNum, TYPEC_VBUS_0V, gasDPM[u8PortNum].u16SinkOperatingCurrInmA);
         #endif
+        printk("TypeC_InitPort 22b\n");
     }
+    printk("TypeC_InitPort 23\n");
     DEBUG_PRINT_PORT_STR (PSF_PROTOCOL_TYPEC_LAYER_DEBUG_MSG,u8PortNum,"TYPEC: Port Init Done\r\n");             
 }
 
@@ -383,6 +396,7 @@ void TypeC_GenericInitPort (UINT8 u8PortNum)
 /*******************************************************************************************/
 /*********************************TypeC State machine**************************************/
 /*******************************************************************************************/
+
 void TypeC_RunStateMachine (UINT8 u8PortNum)
 {
     UINT8 u8CC1MatchISR = SET_TO_ZERO;
@@ -391,10 +405,13 @@ void TypeC_RunStateMachine (UINT8 u8PortNum)
 #endif
     
     UINT8 u8IntStsISR = SET_TO_ZERO;
+
+    printk("TypeC_RunStateMachine 1\n");
     
     /*Handle CC and VBUS Interrupt if any*/
     TypeC_CCVBUSIntrHandler (u8PortNum);
     
+    printk("TypeC_RunStateMachine 2\n");
     MCHP_PSF_HOOK_DISABLE_GLOBAL_INTERRUPT();
 
     u8CC1MatchISR = gasTypeCcontrol[u8PortNum].u8CC1MatchISR;
@@ -406,13 +423,16 @@ void TypeC_RunStateMachine (UINT8 u8PortNum)
 
     MCHP_PSF_HOOK_ENABLE_GLOBAL_INTERRUPT();
     
+    printk("TypeC_RunStateMachine state %u\n", gasTypeCcontrol[u8PortNum].u8TypeCState);
     switch (gasTypeCcontrol[u8PortNum].u8TypeCState)
     {      
         case TYPEC_INIT:
         {
+            printk("TypeC_RunStateMachine 3\n");
             TypeC_InitPort (u8PortNum);
-
+            printk("TypeC_RunStateMachine 4\n");
             PRL_UpdatePowerRole (u8PortNum);
+            printk("TypeC_RunStateMachine 5\n");
             
             break;
         }
@@ -2233,6 +2253,8 @@ void TypeC_ConfigCCComp (UINT8 u8PortNum, UINT8 u8ConfigVal)
     {
         UPD_RegisterRead (u8PortNum, TYPEC_CC_HW_CTL_HIGH, &u8Data, BYTE_LEN_1);
         
+        // Dude don't hog the cpu.
+        k_msleep(1);
     }while((u8Data & TYPEC_CC_DB_ACTIVE) == u8DesiredDBState); 
     
 }
@@ -3332,30 +3354,34 @@ void TypeC_SetVBUSCompONOFF (UINT8 u8PortNum, UINT8 u8ConfigVal)
     UINT8 u8Data;
     UINT8 u8DesiredDBState;
       
-    /*Set VBUS Comparator OFF*/
-    if (TYPEC_VBUSCOMP_OFF == u8ConfigVal)
-    {
-        /*Disabling the VBUS Debouncer */
-        UPD_RegByteClearBit (u8PortNum, TYPEC_VBUS_CTL1_LOW, TYPEC_VBUS_DET);
+    do {
+        /*Set VBUS Comparator OFF*/
+        if (TYPEC_VBUSCOMP_OFF == u8ConfigVal)
+        {
+            /*Disabling the VBUS Debouncer */
+            UPD_RegByteClearBit (u8PortNum, TYPEC_VBUS_CTL1_LOW, TYPEC_VBUS_DET);
 
-        /* Wait until the VBUS Debouncer goes to inactive state  */
-        u8DesiredDBState = TYPEC_VBUS_DB_ACTIVE;           
-    }
-    /*Set VBUS Comparator ON*/
-    else
-    {
-        /* Setting the VBUS Comparator Control ON*/
-        UPD_RegByteSetBit (u8PortNum, TYPEC_VBUS_CTL1_LOW, TYPEC_VBUS_DET);
+            /* Wait until the VBUS Debouncer goes to inactive state  */
+            u8DesiredDBState = TYPEC_VBUS_DB_ACTIVE;           
+        }
+        /*Set VBUS Comparator ON*/
+        else
+        {
+            /* Setting the VBUS Comparator Control ON*/
+            UPD_RegByteSetBit (u8PortNum, TYPEC_VBUS_CTL1_LOW, TYPEC_VBUS_DET);
+            
+            /* Wait until VBUS Comparator goes to active state */
+            u8DesiredDBState = FALSE; 
+        }
         
-        /* Wait until VBUS Comparator goes to active state */
-        u8DesiredDBState = FALSE; 
-    }
-    
-    do
-    {
         UPD_RegisterRead (u8PortNum, TYPEC_VBUS_CTL1_LOW, &u8Data, BYTE_LEN_1);
+
+        printk("u8Data = %u\n", u8Data);
         
-    }while((u8Data & TYPEC_VBUS_DB_ACTIVE)  == u8DesiredDBState);
+        // Dude don't hog the cpu.
+        k_msleep(1000);
+
+    } while((u8Data & TYPEC_VBUS_DB_ACTIVE)  == u8DesiredDBState);
 }
 /**************************************************************/
 void TypeC_ConfigureVBUSThr (UINT8 u8PortNum, UINT16 u16Voltage, UINT16 u16Current, UINT8 u8PowerFaultThrConfig)

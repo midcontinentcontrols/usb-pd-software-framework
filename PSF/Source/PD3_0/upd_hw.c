@@ -32,6 +32,7 @@ HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 *******************************************************************************/
 
 #include <psf_stdinc.h>
+#include <zephyr/kernel.h>
 
 /*******************************************************************************************/
 /**************************UPD Register Read/Write APIs*************************************/
@@ -817,6 +818,7 @@ void UPD_CheckAndDisablePorts (void)
             /*Start 10ms timer*/
             u8TimerID = PDTimer_Start (MILLISECONDS_TO_TICKS(BYTE_LEN_10), NULL, \
                                         (UINT8)SET_TO_ZERO, (UINT8)SET_TO_ZERO);
+            printk("UPD_CheckAndDisablePorts started timer %u\n", u8TimerID);
             
             while ((gasPDTimers[u8TimerID].u8TimerStPortNum & PDTIMER_STATE) != PDTIMER_EXPIRED)
             {
@@ -837,6 +839,7 @@ void UPD_CheckAndDisablePorts (void)
                     {  
                         /*Value read from this port is right, so enable the ports, Set SPI 
                            Communication is active for this port*/
+                        printk("Port %u enabled\n", u8PortNum);
                         DPM_ENABLE_CONFIGURED_PORT_EN(u8PortNum);
                         break;
                     }
@@ -851,7 +854,9 @@ void UPD_CheckAndDisablePorts (void)
                 {
                     DPM_DISABLE_CONFIGURED_PORT_EN(u8PortNum);
                 }   /*end of UPD_SPI_TEST_VAL check if else*/
-#endif            
+#endif           
+                // Yield to system workqueue so timers may be processed
+                k_msleep(1);
             } /* end of while*/
             /*kill the timer if the UPD is identified.*/
             PDTimer_Kill (u8TimerID);
