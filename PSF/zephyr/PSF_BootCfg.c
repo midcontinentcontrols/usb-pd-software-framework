@@ -111,6 +111,7 @@ void PSF_LoadConfig(GLOBAL_CFG_STATUS_DATA *pasCfgStatusData)
 
     pasCfgStatusData->sPerPortData[PORT0].u16FeatureSelect = CFG_PORT_0_FEATURE_SELECT;                  
 
+#if (CONFIG_PD_PORT_COUNT > 1)
 /*************************************************************************************/
 /**************************************Port 1 Configurations**************************/
 /*************************************************************************************/
@@ -143,7 +144,8 @@ void PSF_LoadConfig(GLOBAL_CFG_STATUS_DATA *pasCfgStatusData)
  /*Configure role swap policy for note type port*/
     pasCfgStatusData->sPerPortData[PORT1].u16SwapPolicy = CFG_PORT_1_ROLE_SWAP_POLICY;
 
-    pasCfgStatusData->sPerPortData[PORT1].u16FeatureSelect = CFG_PORT_1_FEATURE_SELECT;                  
+    pasCfgStatusData->sPerPortData[PORT1].u16FeatureSelect = CFG_PORT_1_FEATURE_SELECT; 
+#endif                 
 }
 
 
