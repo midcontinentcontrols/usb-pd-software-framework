@@ -2221,35 +2221,34 @@ void TypeC_ConfigCCComp (UINT8 u8PortNum, UINT8 u8ConfigVal)
 {     
     UINT8 u8Data;
     UINT8 u8DesiredDBState;
+
+    /*Enabling the Corresponding lines for the CC Debouncer Sampling */  
+    UPD_RegisterRead (u8PortNum, TYPEC_CC_CTL1_HIGH, &u8Data, BYTE_LEN_1);
+    
+    /*Clearing the CC Comparator sampling bits before setting a particular configuration*/
+    u8Data &= ~TYPEC_CC_COMP_CTL;
+    u8Data |= u8ConfigVal;
+    UPD_RegisterWrite (u8PortNum, TYPEC_CC_CTL1_HIGH, &u8Data, BYTE_LEN_1);
+    
+    /*Set CC Comparator OFF*/
+    if (TYPEC_CC_COMP_CTL_DIS == u8ConfigVal)
+    {  
+        /* Wait until the CC Debouncer goes to inactive state  */ 
+        u8DesiredDBState = TYPEC_CC_DB_ACTIVE;             
+    }
+    else
+    {
+        /* Wait until the CC Debouncer goes to Active state  */
+        u8DesiredDBState = FALSE;      
+    }
     
     do {
-         /*Enabling the Corresponding lines for the CC Debouncer Sampling */  
-        UPD_RegisterRead (u8PortNum, TYPEC_CC_CTL1_HIGH, &u8Data, BYTE_LEN_1);
-        
-        /*Clearing the CC Comparator sampling bits before setting a particular configuration*/
-        u8Data &= ~TYPEC_CC_COMP_CTL;
-        u8Data |= u8ConfigVal;
-        UPD_RegisterWrite (u8PortNum, TYPEC_CC_CTL1_HIGH, &u8Data, BYTE_LEN_1);
-        
-        /*Set CC Comparator OFF*/
-        if (TYPEC_CC_COMP_CTL_DIS == u8ConfigVal)
-        {  
-            /* Wait until the CC Debouncer goes to inactive state  */ 
-            u8DesiredDBState = TYPEC_CC_DB_ACTIVE;             
-        }
-        else
-        {
-            /* Wait until the CC Debouncer goes to Active state  */
-            u8DesiredDBState = FALSE;      
-        }
-
-        
         UPD_RegisterRead (u8PortNum, TYPEC_CC_HW_CTL_HIGH, &u8Data, BYTE_LEN_1);
         
         // printk("TypeC_SetVBUSCompONOFF u8Data = %u EXPECT %u\n", u8Data, u8DesiredDBState);
         
         // Yield to other threads (derp)
-        // k_msleep(1000);
+        k_msleep(1);
 
     } while((u8Data & TYPEC_CC_DB_ACTIVE) == u8DesiredDBState); 
     
@@ -3349,33 +3348,33 @@ void TypeC_SetVBUSCompONOFF (UINT8 u8PortNum, UINT8 u8ConfigVal)
 {
     UINT8 u8Data;
     UINT8 u8DesiredDBState;
+
+    /*Set VBUS Comparator OFF*/
+    if (TYPEC_VBUSCOMP_OFF == u8ConfigVal)
+    {
+        /*Disabling the VBUS Debouncer */
+        UPD_RegByteClearBit (u8PortNum, TYPEC_VBUS_CTL1_LOW, TYPEC_VBUS_DET);
+
+        /* Wait until the VBUS Debouncer goes to inactive state  */
+        u8DesiredDBState = TYPEC_VBUS_DB_ACTIVE;           
+    }
+    /*Set VBUS Comparator ON*/
+    else
+    {
+        /* Setting the VBUS Comparator Control ON*/
+        UPD_RegByteSetBit (u8PortNum, TYPEC_VBUS_CTL1_LOW, TYPEC_VBUS_DET);
+        
+        /* Wait until VBUS Comparator goes to active state */
+        u8DesiredDBState = FALSE; 
+    }
       
     do {
-        /*Set VBUS Comparator OFF*/
-        if (TYPEC_VBUSCOMP_OFF == u8ConfigVal)
-        {
-            /*Disabling the VBUS Debouncer */
-            UPD_RegByteClearBit (u8PortNum, TYPEC_VBUS_CTL1_LOW, TYPEC_VBUS_DET);
-
-            /* Wait until the VBUS Debouncer goes to inactive state  */
-            u8DesiredDBState = TYPEC_VBUS_DB_ACTIVE;           
-        }
-        /*Set VBUS Comparator ON*/
-        else
-        {
-            /* Setting the VBUS Comparator Control ON*/
-            UPD_RegByteSetBit (u8PortNum, TYPEC_VBUS_CTL1_LOW, TYPEC_VBUS_DET);
-            
-            /* Wait until VBUS Comparator goes to active state */
-            u8DesiredDBState = FALSE; 
-        }
-        
         UPD_RegisterRead (u8PortNum, TYPEC_VBUS_CTL1_LOW, &u8Data, BYTE_LEN_1);
 
         // printk("TypeC_SetVBUSCompONOFF u8Data = %u EXPECT %u\n", u8Data, u8DesiredDBState);
         
         // Dude don't hog the cpu.
-        // k_msleep(1000);
+        k_msleep(1);
 
     } while((u8Data & TYPEC_VBUS_DB_ACTIVE)  == u8DesiredDBState);
 }
