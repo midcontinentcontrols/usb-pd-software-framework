@@ -188,7 +188,7 @@ void TypeC_InitPort (UINT8 u8PortNum)
 		printk("TypeC_InitPort 5\n");
 	/*Setting VBUS_BLK_EN bit in VBUS Control 2 Register*/
     UPD_RegByteSetBit (u8PortNum, TYPEC_VBUS_CTL2, TYPEC_VBUS_DEB_BLK_EN);
- printk("TypeC_InitPort 6 role %u\n", DPM_GET_CURRENT_POWER_ROLE(u8PortNum));
+ printk("TypeC_InitPort 6 role %lu\n", DPM_GET_CURRENT_POWER_ROLE(u8PortNum));
 	switch (DPM_GET_CURRENT_POWER_ROLE(u8PortNum))
     {
       
