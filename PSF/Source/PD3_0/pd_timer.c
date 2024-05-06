@@ -68,29 +68,6 @@ static void pd_timer_workq_handler(struct k_work* work) {
 static void pd_timer_expiry_handler(struct k_timer* timer) {
     pd_timer_data_t* data = CONTAINER_OF(timer, pd_timer_data_t, timer);
     k_work_submit(&data->work);
-
-    // MCHP_PSF_HOOK_DISABLE_GLOBAL_INTERRUPT();
-
-//     // Setting the timer state as "Timer Expired"
-//     gasPDTimers[data->timer_id].u8TimerStPortNum &= ~PDTIMER_STATE;
-//     gasPDTimers[data->timer_id].u8TimerStPortNum |= PDTIMER_EXPIRED;
-// #if MCHP_PSF_CONFIG_16BIT_PDTIMER_COUNTER
-//     gasPDTimers[data->timer_id].u16TimeoutTickCnt = 0;
-// #else
-//     gasPDTimers[data->timer_id].u32TimeoutTickCnt = 0;
-// #endif
-    
-//     printk("timer %u fired\n", data->timer_id);
-
-//     if(gasPDTimers[data->timer_id].pfnTimerCallback == NULL) return;
-
-//     // Execute callback OUTSIDE of IRQ context
-//     gasPDTimers[data->timer_id].pfnTimerCallback(
-//         gasPDTimers[data->timer_id].u8TimerStPortNum & PDTIMER_PORT_NUM, 
-//         gasPDTimers[data->timer_id].u8PDState
-//     );
-
-    // MCHP_PSF_HOOK_ENABLE_GLOBAL_INTERRUPT();
 }
 
 /*******************************************************************************/
