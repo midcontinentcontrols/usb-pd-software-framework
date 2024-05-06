@@ -32,7 +32,6 @@ HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 *******************************************************************************/
 
 #include <psf_stdinc.h>
-#include <zephyr/kernel.h>
 
 /*******************************************************************/
 /******************* Functions**************************************/
@@ -51,101 +50,83 @@ UINT8 MchpPSF_Init (void)
     PSF_APP_I2C_Drv_Initialize();
 #endif
      
-    printk("MchpPSF_Init 1\n");
     
     /* Load configurations */
     MCHP_PSF_HOOK_BOOT_TIME_CONFIG(&gasCfgStatusData);
-    
-    printk("MchpPSF_Init 2\n");
+       
     /*Timer module Initialization*/
     u8InitStatus &= PDTimer_Init ();
-    printk("MchpPSF_Init 3\n");
+    
     /*Initialize HW SPI module defined by the user*/
     u8InitStatus &= MCHP_PSF_HOOK_UPDHW_INTF_INIT();
-    printk("MchpPSF_Init 4\n");
+    
 	
     for (UINT8 u8PortNum = SET_TO_ZERO; u8PortNum < CONFIG_PD_PORT_COUNT; u8PortNum++)
     {
-        printk("MchpPSF_Init 5a\n");
         /*If Timer and HW module of SOC are not initialized properly disable all the ports*/
         if (TRUE != u8InitStatus)
         {
             DPM_DISABLE_CONFIGURED_PORT_EN(u8PortNum);
         }
-        printk("MchpPSF_Init 5b\n");
         #if (CONFIG_DEFINE_UPD350_HW_INTF_SEL == CONFIG_UPD350_SPI)
         /*Initialize chip select in case of SPI configuration*/
         MCHP_PSF_HOOK_GPIO_FUNC_INIT(u8PortNum, eSPI_CHIP_SELECT_FUNC);
         #endif
-        printk("MchpPSF_Init 5c\n");
+        
         /*Initialize orientation pin*/
         MCHP_PSF_HOOK_GPIO_FUNC_INIT(u8PortNum, eORIENTATION_FUNC);
     }
     
-    printk("MchpPSF_Init 6\n");
     /*Since, Reset is common for all the ports. It is called only once with PORT0 as dummy value*/
     MCHP_PSF_HOOK_GPIO_FUNC_INIT(PORT0, eUPD350_RESET_FUNC);
-    printk("MchpPSF_Init 7\n");
+    
 	/*Initialize Internal global variables*/
     IntGlobals_PDInitialization ();
-    printk("MchpPSF_Init 8\n");
+    
     UPD_CheckAndDisablePorts ();	
-    printk("MchpPSF_Init 9\n");
+
     /* VBUS threshold correction factor */
     UPD_FindVBusCorrectionFactor ();
-    printk("MchpPSF_Init 10\n");
     
     #if (TRUE == CONFIG_HOOK_DEBUG_MSG)
         /*Initialize debug hardware*/
         MCHP_PSF_HOOK_DEBUG_INIT();
     #endif
-
-    printk("MchpPSF_Init 11\n");
     
     /* Disable the global interrupt */
     MCHP_PSF_HOOK_DISABLE_GLOBAL_INTERRUPT();
-
-    printk("MchpPSF_Init 12\n");
         
     for (UINT8 u8PortNum = SET_TO_ZERO; u8PortNum < CONFIG_PD_PORT_COUNT; u8PortNum++)
     {
-        printk("MchpPSF_Init 13\n");
         if (UPD_PORT_ENABLED == DPM_GET_CONFIGURED_PORT_EN(u8PortNum))
         {
-            printk("MchpPSF_Init 13a\n");
             /*Port Power Initialization*/
             u8InitStatus &= PWRCTRL_Init (u8PortNum);
         }
     }
-
-    printk("MchpPSF_Init 14\n");
     
     for (UINT8 u8PortNum = SET_TO_ZERO; u8PortNum < CONFIG_PD_PORT_COUNT; u8PortNum++)
     {
-        printk("MchpPSF_Init 15a\n");
         if (UPD_PORT_ENABLED == DPM_GET_CONFIGURED_PORT_EN(u8PortNum))
         {
-            printk("MchpPSF_Init 15b\n");
             /* Initialize the Port's IRQ*/
             MCHP_PSF_HOOK_GPIO_FUNC_INIT(u8PortNum, eUPD350_ALERT_FUNC);
-            printk("MchpPSF_Init 15c\n");
+            
             /*Initialize the Port's DC_DC Alert */
             MCHP_PSF_HOOK_GPIO_FUNC_INIT(u8PortNum, eI2C_DC_DC_ALERT_FUNC);        
         }
     }    
     
-    printk("MchpPSF_Init 16\n");
     DPM_InitStateMachine ();  
-    printk("MchpPSF_Init 17\n");
+
     /* Enable the global interrupt */
     MCHP_PSF_HOOK_ENABLE_GLOBAL_INTERRUPT();
-    printk("MchpPSF_Init 18\n");
 
     return u8InitStatus;
 
 }
 /********************************************************************************************/
-void MchpPSF_RUN()
+void MchpPSF_RUN ()
 {
 	for (UINT8 u8PortNum = SET_TO_ZERO; u8PortNum < CONFIG_PD_PORT_COUNT; u8PortNum++)
   	{
@@ -170,3 +151,4 @@ void MchpPSF_PDTimerHandler (void)
     PDTimer_InterruptHandler ();
 }
 /*********************************************************************************************/
+

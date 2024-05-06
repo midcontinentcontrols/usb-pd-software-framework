@@ -1,4 +1,4 @@
-/*************************************************************************** 
+/***************************************************************************
   User Configuration File
 
   Company:
@@ -39,7 +39,9 @@ HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 /* Section: Included Files                                                    */
 /* ************************************************************************** */
 /* ************************************************************************** */
-#include <psf_stdinc.h>
+#include "PSF_Config.h"
+#include "upd350_pio_drivers.h"
+#include "pd_timer.h"
 #include <string.h>
 
 /*******************************************************************/
@@ -59,12 +61,12 @@ HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 /* ************************************************************************** */
 void PSF_LoadConfig(GLOBAL_CFG_STATUS_DATA *pasCfgStatusData)
 {
-	UINT8 u8Length = SET_TO_ZERO;
-	
+	uint8_t u8Length = SET_TO_ZERO;
+
     pasCfgStatusData->u16ProductID = CFG_PRODUCT_ID;
     pasCfgStatusData->u16VendorID = CFG_VENDOR_ID;
     pasCfgStatusData->u8HWVersion = CFG_HW_VERSION;
-    pasCfgStatusData->u8SiVersion = CFG_SILICON_VERSION; 
+    pasCfgStatusData->u8SiVersion = CFG_SILICON_VERSION;
     pasCfgStatusData->u8ManfStringLength = CFG_MANUFACTURER_STR_LEN;
 
     while(u8Length < pasCfgStatusData->u8ManfStringLength)
@@ -73,19 +75,17 @@ void PSF_LoadConfig(GLOBAL_CFG_STATUS_DATA *pasCfgStatusData)
         u8Length++;
     }
 
-
-
-/***********************************Port Specific configuration***********************/    
+/***********************************Port Specific configuration***********************/
 
 /*************************************************************************************/
 /**************************************Port 0 Configurations**************************/
 /*************************************************************************************/
     pasCfgStatusData->sPerPortData[PORT0].u32CfgData = CFG_PORT_0_CFG_DATA;
-    
-    pasCfgStatusData->sPerPortData[PORT0].u8Pio_FAULT_IN = (UINT8)CFG_PORT_0_UPD_FAULT_IN_PIO_NO;
-    pasCfgStatusData->sPerPortData[PORT0].u8Mode_FAULT_IN = (UINT8)CFG_PORT_0_UPD_FAULT_IN_MODE;
-    pasCfgStatusData->sPerPortData[PORT0].u8Pio_EN_VBUS = (UINT8)CFG_PORT_0_UPD_EN_VBUS;
-    pasCfgStatusData->sPerPortData[PORT0].u8Mode_EN_VBUS = (UINT8)CFG_PORT_0_UPD_EN_VBUS_PIO_MODE;
+
+    pasCfgStatusData->sPerPortData[PORT0].u8Pio_FAULT_IN = (uint8_t)eUPD_PIO5;
+    pasCfgStatusData->sPerPortData[PORT0].u8Mode_FAULT_IN = (uint8_t)eINPUT_ACTIVE_LOW;
+    pasCfgStatusData->sPerPortData[PORT0].u8Pio_EN_VBUS = (uint8_t)eUPD_PIO3;
+    pasCfgStatusData->sPerPortData[PORT0].u8Mode_EN_VBUS = (uint8_t)ePUSH_PULL_ACTIVE_HIGH;
 
     pasCfgStatusData->sPerPortData[PORT0].u8OCSThresholdPercentage = SET_TO_ZERO;
     pasCfgStatusData->sPerPortData[PORT0].u8OVThresholdPercentage = CFG_PORT_0_OVER_VOLTAGE_FACTOR;
@@ -98,9 +98,9 @@ void PSF_LoadConfig(GLOBAL_CFG_STATUS_DATA *pasCfgStatusData)
     pasCfgStatusData->sPerPortData[PORT0].u16MaxSrcPrtCurrentIn10mA = CFG_PORT_0_MAX_PORT_CURRENT_IN_10mA;
 
 /**************************************Source Configurations**************************/
-    pasCfgStatusData->sPerPortData[PORT0].u8SourcePDOCnt = CFG_PORT_0_SOURCE_NUM_OF_PDOS; 
+    pasCfgStatusData->sPerPortData[PORT0].u8SourcePDOCnt = CFG_PORT_0_SOURCE_NUM_OF_PDOS;
 
-    /*PDOs update*/ 
+    /*PDOs update*/
     pasCfgStatusData->sPerPortData[PORT0].u32aSourcePDO[INDEX_0] = CFG_PORT_0_SOURCE_PDO_1;
     pasCfgStatusData->sPerPortData[PORT0].u32aSourcePDO[INDEX_1] = CFG_PORT_0_SOURCE_PDO_2;
     pasCfgStatusData->sPerPortData[PORT0].u32aSourcePDO[INDEX_2] = CFG_PORT_0_SOURCE_PDO_3;
@@ -109,18 +109,22 @@ void PSF_LoadConfig(GLOBAL_CFG_STATUS_DATA *pasCfgStatusData)
  /*Configure role swap policy for note type port*/
     pasCfgStatusData->sPerPortData[PORT0].u16SwapPolicy = CFG_PORT_0_ROLE_SWAP_POLICY;
 
-    pasCfgStatusData->sPerPortData[PORT0].u16FeatureSelect = CFG_PORT_0_FEATURE_SELECT;                  
+    pasCfgStatusData->sPerPortData[PORT0].u16FeatureSelect = CFG_PORT_0_FEATURE_SELECT;
 
-#if (CONFIG_PD_PORT_COUNT > 1)
+    //pasCfgStatusData->sPBPerPortData[PORT0].u16MaxPrtPwrBankAIn250mW = (60*4);
+    //pasCfgStatusData->sPBPerPortData[PORT0].u16MaxPrtPwrBankBIn250mW = (45*4);
+    //pasCfgStatusData->sPBPerPortData[PORT0].u16MaxPrtPwrBankCIn250mW = (15*4);
+
 /*************************************************************************************/
 /**************************************Port 1 Configurations**************************/
 /*************************************************************************************/
+#if (CONFIG_PD_PORT_COUNT > 1)
     pasCfgStatusData->sPerPortData[PORT1].u32CfgData = CFG_PORT_1_CFG_DATA;
-    
-    pasCfgStatusData->sPerPortData[PORT1].u8Pio_FAULT_IN = (UINT8)CFG_PORT_1_UPD_FAULT_IN_PIO_NO;
-    pasCfgStatusData->sPerPortData[PORT1].u8Mode_FAULT_IN = (UINT8)CFG_PORT_1_UPD_FAULT_IN_MODE;
-    pasCfgStatusData->sPerPortData[PORT1].u8Pio_EN_VBUS = (UINT8)CFG_PORT_1_UPD_EN_VBUS;
-    pasCfgStatusData->sPerPortData[PORT1].u8Mode_EN_VBUS = (UINT8)CFG_PORT_1_UPD_EN_VBUS_PIO_MODE;
+
+    pasCfgStatusData->sPerPortData[PORT1].u8Pio_FAULT_IN = (uint8_t)eUPD_PIO5;
+    pasCfgStatusData->sPerPortData[PORT1].u8Mode_FAULT_IN = (uint8_t)eINPUT_ACTIVE_LOW;
+    pasCfgStatusData->sPerPortData[PORT1].u8Pio_EN_VBUS = (uint8_t)eUPD_PIO3;
+    pasCfgStatusData->sPerPortData[PORT1].u8Mode_EN_VBUS = (uint8_t)ePUSH_PULL_ACTIVE_HIGH;
 
     pasCfgStatusData->sPerPortData[PORT1].u8OCSThresholdPercentage = SET_TO_ZERO;
     pasCfgStatusData->sPerPortData[PORT1].u8OVThresholdPercentage = CFG_PORT_1_OVER_VOLTAGE_FACTOR;
@@ -133,19 +137,101 @@ void PSF_LoadConfig(GLOBAL_CFG_STATUS_DATA *pasCfgStatusData)
     pasCfgStatusData->sPerPortData[PORT1].u16MaxSrcPrtCurrentIn10mA = CFG_PORT_1_MAX_PORT_CURRENT_IN_10mA;
 
 /**************************************Source Configurations**************************/
-    pasCfgStatusData->sPerPortData[PORT1].u8SourcePDOCnt = CFG_PORT_1_SOURCE_NUM_OF_PDOS; 
+    pasCfgStatusData->sPerPortData[PORT1].u8SourcePDOCnt = CFG_PORT_1_SOURCE_NUM_OF_PDOS;
 
-    /*PDOs update*/ 
-    pasCfgStatusData->sPerPortData[PORT1].u32aSourcePDO[INDEX_0] = CFG_PORT_1_SOURCE_PDO_1;
-    pasCfgStatusData->sPerPortData[PORT1].u32aSourcePDO[INDEX_1] = CFG_PORT_1_SOURCE_PDO_2;
-    pasCfgStatusData->sPerPortData[PORT1].u32aSourcePDO[INDEX_2] = CFG_PORT_1_SOURCE_PDO_3;
-    pasCfgStatusData->sPerPortData[PORT1].u32aSourcePDO[INDEX_3] = CFG_PORT_1_SOURCE_PDO_4;
+    /*PDOs update*/
+    pasCfgStatusData->sPerPortData[PORT1].u32aSourcePDO[INDEX_0] = CFG_PORT_0_SOURCE_PDO_1;
+    pasCfgStatusData->sPerPortData[PORT1].u32aSourcePDO[INDEX_1] = CFG_PORT_0_SOURCE_PDO_2;
+    pasCfgStatusData->sPerPortData[PORT1].u32aSourcePDO[INDEX_2] = CFG_PORT_0_SOURCE_PDO_3;
+    pasCfgStatusData->sPerPortData[PORT1].u32aSourcePDO[INDEX_3] = CFG_PORT_0_SOURCE_PDO_4;
 
  /*Configure role swap policy for note type port*/
     pasCfgStatusData->sPerPortData[PORT1].u16SwapPolicy = CFG_PORT_1_ROLE_SWAP_POLICY;
+    pasCfgStatusData->sPerPortData[PORT1].u16FeatureSelect = CFG_PORT_1_FEATURE_SELECT;
 
-    pasCfgStatusData->sPerPortData[PORT1].u16FeatureSelect = CFG_PORT_1_FEATURE_SELECT; 
-#endif                 
+    //pasCfgStatusData->sPBPerPortData[PORT1].u16MaxPrtPwrBankAIn250mW = (60*4);
+    //pasCfgStatusData->sPBPerPortData[PORT1].u16MaxPrtPwrBankBIn250mW = (45*4);
+    //pasCfgStatusData->sPBPerPortData[PORT1].u16MaxPrtPwrBankCIn250mW = (15*4);
+
+/*************************************************************************************/
+/**************************************Port 2 Configurations**************************/
+/*************************************************************************************/
+#if (CONFIG_PD_PORT_COUNT > 2)
+    pasCfgStatusData->sPerPortData[PORT2].u32CfgData = CFG_PORT_2_CFG_DATA;
+
+    pasCfgStatusData->sPerPortData[PORT2].u8Pio_FAULT_IN = (uint8_t)eUPD_PIO5;
+    pasCfgStatusData->sPerPortData[PORT2].u8Mode_FAULT_IN = (uint8_t)eINPUT_ACTIVE_LOW;
+    pasCfgStatusData->sPerPortData[PORT2].u8Pio_EN_VBUS = (uint8_t)eUPD_PIO3;
+    pasCfgStatusData->sPerPortData[PORT2].u8Mode_EN_VBUS = (uint8_t)ePUSH_PULL_ACTIVE_HIGH;
+
+    pasCfgStatusData->sPerPortData[PORT2].u8OCSThresholdPercentage = SET_TO_ZERO;
+    pasCfgStatusData->sPerPortData[PORT2].u8OVThresholdPercentage = CFG_PORT_2_OVER_VOLTAGE_FACTOR;
+    pasCfgStatusData->sPerPortData[PORT2].u8UVThresholdPercentage = CFG_PORT_2_UNDER_VOLTAGE_FACTOR;
+    pasCfgStatusData->sPerPortData[PORT2].u8FaultInDebounceInms = CFG_PORT_2_FAULT_IN_OCS_DEBOUNCE_MS;
+    pasCfgStatusData->sPerPortData[PORT2].u8VCONNOCSDebounceInms = CFG_PORT_2_VCONN_OCS_DEBOUNCE_IN_MS;
+    pasCfgStatusData->sPerPortData[PORT2].u8VBUSMaxFaultCnt = CFG_PORT_2_MAX_VBUS_POWER_FAULT_COUNT;
+    pasCfgStatusData->sPerPortData[PORT2].u8VCONNMaxFaultCnt = CFG_PORT_2_MAX_VCONN_FAULT_COUNT;
+    pasCfgStatusData->sPerPortData[PORT2].u16PowerGoodTimerInms = MILLISECONDS_TO_TICKS(CFG_PORT_2_POWER_GOOD_TIMER_MS);
+    pasCfgStatusData->sPerPortData[PORT2].u16MaxSrcPrtCurrentIn10mA = CFG_PORT_2_MAX_PORT_CURRENT_IN_10mA;
+
+/**************************************Source Configurations**************************/
+    pasCfgStatusData->sPerPortData[PORT2].u8SourcePDOCnt = CFG_PORT_2_SOURCE_NUM_OF_PDOS;
+
+    /*PDOs update*/
+    pasCfgStatusData->sPerPortData[PORT2].u32aSourcePDO[INDEX_0] = CFG_PORT_0_SOURCE_PDO_1;
+    pasCfgStatusData->sPerPortData[PORT2].u32aSourcePDO[INDEX_1] = CFG_PORT_0_SOURCE_PDO_2;
+    pasCfgStatusData->sPerPortData[PORT2].u32aSourcePDO[INDEX_2] = CFG_PORT_0_SOURCE_PDO_3;
+    pasCfgStatusData->sPerPortData[PORT2].u32aSourcePDO[INDEX_3] = CFG_PORT_0_SOURCE_PDO_4;
+
+ /*Configure role swap policy for note type port*/
+    pasCfgStatusData->sPerPortData[PORT2].u16SwapPolicy = CFG_PORT_1_ROLE_SWAP_POLICY;
+    pasCfgStatusData->sPerPortData[PORT2].u16FeatureSelect = CFG_PORT_1_FEATURE_SELECT;
+
+    //pasCfgStatusData->u8PwrThrottleCfg = 0x07;
+    //pasCfgStatusData->sPBPerPortData[PORT2].u16MaxPrtPwrBankAIn250mW = (60*4);
+    //pasCfgStatusData->sPBPerPortData[PORT2].u16MaxPrtPwrBankBIn250mW = (45*4);
+    //pasCfgStatusData->sPBPerPortData[PORT2].u16MaxPrtPwrBankCIn250mW = (15*4);
+
+/*************************************************************************************/
+/**************************************Port 3 Configurations**************************/
+/*************************************************************************************/
+#if (CONFIG_PD_PORT_COUNT > 3)
+    pasCfgStatusData->sPerPortData[PORT3].u32CfgData = CFG_PORT_3_CFG_DATA;
+
+    pasCfgStatusData->sPerPortData[PORT3].u8Pio_FAULT_IN = (uint8_t)eUPD_PIO5;
+    pasCfgStatusData->sPerPortData[PORT3].u8Mode_FAULT_IN = (uint8_t)eINPUT_ACTIVE_LOW;
+    pasCfgStatusData->sPerPortData[PORT3].u8Pio_EN_VBUS = (uint8_t)eUPD_PIO3;
+    pasCfgStatusData->sPerPortData[PORT3].u8Mode_EN_VBUS = (uint8_t)ePUSH_PULL_ACTIVE_HIGH;
+
+    pasCfgStatusData->sPerPortData[PORT3].u8OCSThresholdPercentage = SET_TO_ZERO;
+    pasCfgStatusData->sPerPortData[PORT3].u8OVThresholdPercentage = CFG_PORT_3_OVER_VOLTAGE_FACTOR;
+    pasCfgStatusData->sPerPortData[PORT3].u8UVThresholdPercentage = CFG_PORT_3_UNDER_VOLTAGE_FACTOR;
+    pasCfgStatusData->sPerPortData[PORT3].u8FaultInDebounceInms = CFG_PORT_3_FAULT_IN_OCS_DEBOUNCE_MS;
+    pasCfgStatusData->sPerPortData[PORT3].u8VCONNOCSDebounceInms = CFG_PORT_3_VCONN_OCS_DEBOUNCE_IN_MS;
+    pasCfgStatusData->sPerPortData[PORT3].u8VBUSMaxFaultCnt = CFG_PORT_3_MAX_VBUS_POWER_FAULT_COUNT;
+    pasCfgStatusData->sPerPortData[PORT3].u8VCONNMaxFaultCnt = CFG_PORT_3_MAX_VCONN_FAULT_COUNT;
+    pasCfgStatusData->sPerPortData[PORT3].u16PowerGoodTimerInms = MILLISECONDS_TO_TICKS(CFG_PORT_3_POWER_GOOD_TIMER_MS);
+    pasCfgStatusData->sPerPortData[PORT3].u16MaxSrcPrtCurrentIn10mA = CFG_PORT_3_MAX_PORT_CURRENT_IN_10mA;
+
+/**************************************Source Configurations**************************/
+    pasCfgStatusData->sPerPortData[PORT3].u8SourcePDOCnt = CFG_PORT_3_SOURCE_NUM_OF_PDOS;
+
+    /*PDOs update*/
+    pasCfgStatusData->sPerPortData[PORT3].u32aSourcePDO[INDEX_0] = CFG_PORT_0_SOURCE_PDO_1;
+    pasCfgStatusData->sPerPortData[PORT3].u32aSourcePDO[INDEX_1] = CFG_PORT_0_SOURCE_PDO_2;
+    pasCfgStatusData->sPerPortData[PORT3].u32aSourcePDO[INDEX_2] = CFG_PORT_0_SOURCE_PDO_3;
+    pasCfgStatusData->sPerPortData[PORT3].u32aSourcePDO[INDEX_3] = CFG_PORT_0_SOURCE_PDO_4;
+
+ /*Configure role swap policy for note type port*/
+    pasCfgStatusData->sPerPortData[PORT3].u16SwapPolicy = CFG_PORT_3_ROLE_SWAP_POLICY;
+    pasCfgStatusData->sPerPortData[PORT3].u16FeatureSelect = CFG_PORT_3_FEATURE_SELECT;
+
+    //pasCfgStatusData->sPBPerPortData[PORT3].u16MaxPrtPwrBankAIn250mW = (60*4);
+    //pasCfgStatusData->sPBPerPortData[PORT3].u16MaxPrtPwrBankBIn250mW = (45*4);
+    //pasCfgStatusData->sPBPerPortData[PORT3].u16MaxPrtPwrBankCIn250mW = (15*4);
+#endif
+#endif
+#endif
 }
 
 

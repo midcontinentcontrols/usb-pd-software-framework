@@ -142,31 +142,32 @@ void DPM_InitStateMachine (void)
 void DPM_RunStateMachine (UINT8 u8PortNum)
 {
     MCHP_PSF_HOOK_DPM_PRE_PROCESS(u8PortNum);       
+
     /* Handle Client Requests if any */
     DPM_ClientRequestHandler (u8PortNum);
-
+    
     /* Handle Internal Events if any */
     DPM_InternalEventHandler (u8PortNum);
-
+    
 	/* Handle Power Faults if any */
 	#if (TRUE == INCLUDE_POWER_FAULT_HANDLING)
 		DPM_PowerFaultHandler (u8PortNum);
 	#endif
-
+        
     /* Handle Generic events if any */  
     DPM_GenericEventHandler (u8PortNum);
-
+    
     /* Handle Power Throttling Bank Switch */
     #if (TRUE == INCLUDE_POWER_THROTTLING)
         PT_HandleBankSwitch (u8PortNum);
     #endif          
-
+        
     /* Run Type C State machine*/
     TypeC_RunStateMachine (u8PortNum);
-
+    
     /* Run Policy engine State machine*/
     PE_RunStateMachine (u8PortNum);  
-
+    
     /* UPD Power Management */
     #if (TRUE == INCLUDE_POWER_MANAGEMENT_CTRL)
         UPD_PwrManagementCtrl (u8PortNum);
