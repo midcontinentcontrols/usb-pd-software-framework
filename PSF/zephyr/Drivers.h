@@ -20,5 +20,8 @@ void PSF_APP_ExitCriticalSection();
 void* PSF_APP_MemCpy(void* dest, const void* src, int len);
 int PSF_APP_MemCmp(const void* ptr1, const void* ptr2, int len);
 
+// Debug hook implementations
+void PSF_APP_USART_Drv_Initialize();
+void PSF_APP_UART_Write_String(char* msg);
 
 #endif //__MC2_ZEPHYR_DRIVERS_UPD350B_PLATFORM_INTEGRATION_H

@@ -72,7 +72,7 @@ Example:
     #define INCLUDE_PD_3_0	0(Exclude USB PD 3.0 specific features from PSF)
     </code>
 **************************************************************************************************/
-#define INCLUDE_PD_3_0          CONFIG_INCLUDE_PD_3_0
+#define INCLUDE_PD_3_0                                  CONFIG_MC2_USBC_UPD350B_INCLUDE_PD_3_0
 
 /**************************************************************************************************
 Summary:
@@ -89,7 +89,7 @@ Example:
     #define INCLUDE_PD_SOURCE	0(Exclude USB PD Source functionality from PSF)
     </code>
 **************************************************************************************************/
-#define INCLUDE_PD_SOURCE       CONFIG_INCLUDE_PD_SOURCE
+#define INCLUDE_PD_SOURCE                               CONFIG_MC2_USBC_UPD350B_INCLUDE_PD_SOURCE
 
 /**************************************************************************************************
 Summary:
@@ -106,7 +106,7 @@ Example:
     #define INCLUDE_PD_SINK	0(Exclude USB PD Sink functionality from PSF)
     </code>
 **************************************************************************************************/
-#define INCLUDE_PD_SINK    		CONFIG_INCLUDE_PD_SINK
+#define INCLUDE_PD_SINK    		                        CONFIG_MC2_USBC_UPD350B_INCLUDE_PD_SINK
 
 /**************************************************************************************************
 Summary:
@@ -124,7 +124,7 @@ Example:
     #define INCLUDE_PD_DRP	0(Exclude USB PD DRP functionality from PSF)
     </code>
 **************************************************************************************************/
-#define INCLUDE_PD_DRP    		CONFIG_INCLUDE_PD_DRP
+#define INCLUDE_PD_DRP    		                        CONFIG_MC2_USBC_UPD350B_INCLUDE_PD_DRP
 
 /**************************************************************************************************
 Summary:
@@ -142,7 +142,7 @@ Example:
     #define INCLUDE_PD_VCONN_SWAP	0(Exclude VCONN Swap functionality from PSF)
     </code>
 **************************************************************************************************/
-#define INCLUDE_PD_VCONN_SWAP  	CONFIG_INCLUDE_PD_VCONN_SWAP
+#define INCLUDE_PD_VCONN_SWAP  	                        CONFIG_MC2_USBC_UPD350B_INCLUDE_PD_VCONN_SWAP
 
 /**************************************************************************************************
 Summary:
@@ -160,7 +160,7 @@ Example:
     #define INCLUDE_POWER_FAULT_HANDLING	0(Exclude Power Fault handling from PSF )
     </code>
 **************************************************************************************************/
-#define INCLUDE_POWER_FAULT_HANDLING     CONFIG_INCLUDE_POWER_FAULT_HANDLING     
+#define INCLUDE_POWER_FAULT_HANDLING                    CONFIG_MC2_USBC_UPD350B_INCLUDE_POWER_FAULT_HANDLING     
 
 /**************************************************************************************************
 Summary:
@@ -187,7 +187,7 @@ Example:
                                                         fault from PSF)
     </code>
 **************************************************************************************************/
-#define INCLUDE_UPD_PIO_OVERRIDE_SUPPORT     CONFIG_INCLUDE_UPD_PIO_OVERRIDE_SUPPORT 
+#define INCLUDE_UPD_PIO_OVERRIDE_SUPPORT                CONFIG_MC2_USBC_UPD350B_INCLUDE_UPD_PIO_OVERRIDE_SUPPORT 
 
 /**************************************************************************************************
 Summary:
@@ -206,7 +206,7 @@ Example:
     #define INCLUDE_POWER_MANAGEMENT_CTRL	0(Exclude power management feature)
     </code>
 **************************************************************************************************/
-#define INCLUDE_POWER_MANAGEMENT_CTRL         CONFIG_INCLUDE_POWER_MANAGEMENT_CTRL
+#define INCLUDE_POWER_MANAGEMENT_CTRL                   CONFIG_MC2_USBC_UPD350B_INCLUDE_POWER_MANAGEMENT_CTRL
 
 /**************************************************************************
 Summary:
@@ -224,7 +224,7 @@ Example:
     #define INCLUDE_PDFU    0(Exclude PDFU feature)
     </code>                                                                        
  ***************************************************************************/
-#define INCLUDE_PDFU                  CONFIG_INCLUDE_PDFU
+#define INCLUDE_PDFU                                    CONFIG_MC2_USBC_UPD350B_INCLUDE_PDFU
 
 /**************************************************************************************************
 Summary:
@@ -243,7 +243,7 @@ Example:
     #define INCLUDE_POWER_BALANCING	0(Exclude Power Balancing functionality from PSF)
     </code>
 **************************************************************************************************/
-#define INCLUDE_POWER_BALANCING  		CONFIG_INCLUDE_POWER_BALANCING
+#define INCLUDE_POWER_BALANCING  		                CONFIG_MC2_USBC_UPD350B_INCLUDE_POWER_BALANCING
 
 /**************************************************************************************************
 Summary:
@@ -262,7 +262,7 @@ Example:
     #define INCLUDE_POWER_THROTTLING	0(Exclude PT functionality from PSF)
     </code>
 **************************************************************************************************/
-#define INCLUDE_POWER_THROTTLING        CONFIG_INCLUDE_POWER_THROTTLING
+#define INCLUDE_POWER_THROTTLING                        CONFIG_MC2_USBC_UPD350B_INCLUDE_POWER_THROTTLING
 
 /**************************************************************************************************
 Summary:
@@ -281,7 +281,7 @@ Example:
     #define INCLUDE_PD_SOURCE_PPS	0(Exclude Source PPS functionality from PSF)
     </code>
 **************************************************************************************************/
-#define INCLUDE_PD_SOURCE_PPS       CONFIG_INCLUDE_PD_SOURCE_PPS
+#define INCLUDE_PD_SOURCE_PPS                           CONFIG_MC2_USBC_UPD350B_INCLUDE_PD_SOURCE_PPS
 
 /**************************************************************************************************
 Summary:
@@ -300,7 +300,7 @@ Example:
     #define INCLUDE_PD_DR_SWAP	0(Exclude DR_SWAP functionality from PSF)
     </code>
 **************************************************************************************************/
-#define INCLUDE_PD_DR_SWAP           CONFIG_INCLUDE_PD_DR_SWAP
+#define INCLUDE_PD_DR_SWAP                              CONFIG_MC2_USBC_UPD350B_INCLUDE_PD_DR_SWAP
 
 /**************************************************************************************************
 Summary:
@@ -319,7 +319,7 @@ Example:
     #define INCLUDE_PD_PR_SWAP	0(Exclude PR_SWAP functionality from PSF)
     </code>
 **************************************************************************************************/
-#define INCLUDE_PD_PR_SWAP      CONFIG_INCLUDE_PD_PR_SWAP
+#define INCLUDE_PD_PR_SWAP                              CONFIG_MC2_USBC_UPD350B_INCLUDE_PD_PR_SWAP
 
 /**************************************************************************************************
 Summary:
@@ -336,7 +336,7 @@ Example:
     #define INCLUDE_PD_VDM	0(Exclude Structured VDM support from PSF)
     </code>
 **************************************************************************************************/
-#define INCLUDE_PD_VDM             CONFIG_INCLUDE_PD_VDM
+#define INCLUDE_PD_VDM                                  CONFIG_MC2_USBC_UPD350B_INCLUDE_PD_VDM
 
 /**************************************************************************************************
 Summary:
@@ -354,7 +354,7 @@ Example:
     #define INCLUDE_PD_ALT_MODE	0(Exclude Alternate Mode support from PSF)
     </code>
 **************************************************************************************************/
-#define INCLUDE_PD_ALT_MODE            CONFIG_INCLUDE_PD_ALT_MODE
+#define INCLUDE_PD_ALT_MODE                             CONFIG_MC2_USBC_UPD350B_INCLUDE_PD_ALT_MODE
 
 /**************************************************************************************************
 Summary:
@@ -372,7 +372,7 @@ Example:
     #define INCLUDE_UPD_HPD	0(Exclude Hot Plug Detect support from PSF)
     </code>
 **************************************************************************************************/
-#define INCLUDE_UPD_HPD             CONFIG_INCLUDE_UPD_HPD
+#define INCLUDE_UPD_HPD                                 CONFIG_MC2_USBC_UPD350B_INCLUDE_UPD_HPD
 /**************************************************************************************************
 Summary:
     Fast Role Swap support code inclusion.
@@ -391,7 +391,7 @@ Example:
     #define INCLUDE_PD_FR_SWAP	0(Exclude FR_SWAP functionality from PSF)
     </code>
 **************************************************************************************************/
-#define INCLUDE_PD_FR_SWAP      CONFIG_INCLUDE_PD_FR_SWAP
+#define INCLUDE_PD_FR_SWAP                              CONFIG_MC2_USBC_UPD350B_INCLUDE_PD_FR_SWAP
 
 
 
@@ -416,7 +416,7 @@ Example:
     #define CONFIG_PD_PORT_COUNT        2 (Number of PD ports enabled in PSF Stack is 2)
     </code>
 **********************************************************************/
-// #define CONFIG_PD_PORT_COUNT            1 /// TODO: Needs to obtain count from device tree, currently defined by Kconfig
+#define CONFIG_PD_PORT_COUNT                            CONFIG_MC2_USBC_UPD350B_PD_PORT_COUNT
 
 /**************************************************************************
 Summary:
@@ -448,7 +448,7 @@ Note:
 
 
   **************************************************************************/
- #define CONFIG_DEFINE_UPD350_HW_INTF_SEL    CONFIG_UPD350_SPI     
+ #define CONFIG_DEFINE_UPD350_HW_INTF_SEL               CONFIG_UPD350_SPI     
 
 /**************************************************************************
 Summary:
@@ -480,7 +480,7 @@ Note:
     Along with setting CONFIG_HOOK_DEBUG_MSG to 1, setting Debug Message Layer macros
     to 1 is required to print status messages for the corresponding layer.
 **************************************************************************/
-#define CONFIG_HOOK_DEBUG_MSG      0    
+#define CONFIG_HOOK_DEBUG_MSG                           CONFIG_MC2_USBC_UPD350B_HOOK_DEBUG_MSG    
 
 /**************************************************************************
 Summary:
@@ -502,7 +502,7 @@ Example:
 Note:
     None.
 **************************************************************************/
-#define PSF_DPM_LAYER_DEBUG_MSG      0 
+#define PSF_DPM_LAYER_DEBUG_MSG                         CONFIG_MC2_USBC_UPD350B_PSF_DPM_LAYER_DEBUG_MSG
 
 /**************************************************************************
 Summary:
@@ -524,7 +524,7 @@ Example:
 Note:
     None.
 **************************************************************************/
-#define PSF_PE_LAYER_DEBUG_MSG      0
+#define PSF_PE_LAYER_DEBUG_MSG                          CONFIG_MC2_USBC_UPD350B_PSF_PE_LAYER_DEBUG_MSG
 
 /**************************************************************************
 Summary:
@@ -546,7 +546,7 @@ Example:
 Note:
     None.
 **************************************************************************/
-#define PSF_PROTOCOL_TYPEC_LAYER_DEBUG_MSG      0
+#define PSF_PROTOCOL_TYPEC_LAYER_DEBUG_MSG              CONFIG_MC2_USBC_UPD350B_PSF_PROTOCOL_TYPEC_LAYER_DEBUG_MSG
 
 /**************************************************************************
 Summary:
@@ -568,7 +568,7 @@ Example:
 Note:
     None.
 **************************************************************************/
-#define PSF_APPLICATION_LAYER_DEBUG_MSG      0
+#define PSF_APPLICATION_LAYER_DEBUG_MSG                 CONFIG_MC2_USBC_UPD350B_PSF_APPLICATION_LAYER_DEBUG_MSG
 
 /**********************************************************************
 Summary:
@@ -584,7 +584,7 @@ Example:
     #define INCLUDE_CFG_STRUCT_MEMORY_PAD_REGION        0 
     </code>
 **********************************************************************/
-#define INCLUDE_CFG_STRUCT_MEMORY_PAD_REGION            CONFIG_INCLUDE_CFG_STRUCT_MEMORY_PAD_REGION
+#define INCLUDE_CFG_STRUCT_MEMORY_PAD_REGION            CONFIG_MC2_USBC_UPD350B_INCLUDE_CFG_STRUCT_MEMORY_PAD_REGION
 
 
 /******************************************************************************************************

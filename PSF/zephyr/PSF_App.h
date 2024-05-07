@@ -11,7 +11,7 @@ Power Delivery Source Pro Application header file
     This header file contains user application specific functions and interfaces
 ************************************************************************** */
 /*******************************************************************************
-Copyright © [2022] Microchip Technology Inc. and its subsidiaries.
+Copyright ï¿½ [2022] Microchip Technology Inc. and its subsidiaries.
 
 Subject to your compliance with these terms, you may use Microchip software and
 any derivatives exclusively with Microchip products. It is your responsibility
@@ -51,23 +51,17 @@ HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 #define APP_VOLTAGE_15000mV     15000
 #define APP_VOLTAGE_20000mV     20000
 
-
 /* Macro to indicate GPIO based DC-DC Controller MCP19119 */
 #define PWRCTRL_GPIO_DC_DC_MCP19119     1
 
 /* Macro to indicate I2C based DC-DC Controller MPQ4230 */
-#define PWRCTRL_I2C_DC_DC_MPQ4230    2
+#define PWRCTRL_I2C_DC_DC_MPQ4230       2
 
 /*Macro to indicate GPIO based DC-DC Controller MIC2128*/
-#define PWRCTRL_GPIO_DC_DC_MIC2128     3
+#define PWRCTRL_GPIO_DC_DC_MIC2128      3
 
 /* Defines the type of DC DC Controller used */
-#define CONFIG_DCDC_CTRL        PWRCTRL_GPIO_DC_DC_MCP19119
-
-
-/* USART module initialization*/
-/*SERCOM1_USART_Initialize is initialized as part of initialization.c */
-#define PSF_DEBUG_INIT() PSF_APP_USART_Drv_Initialize();
+#define CONFIG_DCDC_CTRL                PWRCTRL_GPIO_DC_DC_MCP19119
 
 // *****************************************************************************
 // *****************************************************************************

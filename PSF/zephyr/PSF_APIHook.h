@@ -566,7 +566,7 @@ Remarks:
     User definition of this Hook function is mandatory when CONFIG_HOOK_DEBUG_MSG is declared as '1'.                  
 ***********************************************************************/  
 /*SERCOM1_USART_Initialize is handled specific to the application used */
-#define MCHP_PSF_HOOK_DEBUG_INIT()  PSF_DEBUG_INIT() 
+#define MCHP_PSF_HOOK_DEBUG_INIT()  PSF_APP_USART_Drv_Initialize() 
 
 /***********************************************************************
 Function:

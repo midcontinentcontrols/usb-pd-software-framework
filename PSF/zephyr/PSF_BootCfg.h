@@ -34,19 +34,19 @@ HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 #define _PSF_BOOTCFG_H
 
 /*********************************Common Configuration*****************************************/
-#define CFG_PRODUCT_ID              CONFIG_CFG_PRODUCT_ID
-#define CFG_VENDOR_ID               CONFIG_CFG_VENDOR_ID
-#define CFG_HW_VERSION              CONFIG_CFG_HW_VERSION
-#define CFG_SILICON_VERSION         CONFIG_CFG_SILICON_VERSION
+#define CFG_PRODUCT_ID                              CONFIG_MC2_USBC_UPD350B_PRODUCT_ID
+#define CFG_VENDOR_ID                               CONFIG_MC2_USBC_UPD350B_VENDOR_ID
+#define CFG_HW_VERSION                              CONFIG_MC2_USBC_UPD350B_HW_VERSION
+#define CFG_SILICON_VERSION                         CONFIG_MC2_USBC_UPD350B_SILICON_VERSION
 
 /*Length of Manufacturer string should be within the range of 0 to 21.
  Default length of Manufacturer string is 20*/
-#define CFG_MANUFACTURER_STR_LEN    CONFIG_CFG_MANUFACTURER_STR_LEN
+#define CFG_MANUFACTURER_STR_LEN                    CONFIG_MC2_USBC_UPD350B_MANUFACTURER_STR_LEN
 
 /*Number of characters in Manufacturer string should be less than or equal to
  the value in CFG_MANUFACTURER_STR_LEN. Default manufacturer string is 
  "Microchip Technology" */
-#define CFG_MANUFACTURER_STR        CONFIG_CFG_MANUFACTURER_STR
+#define CFG_MANUFACTURER_STR                        CONFIG_MC2_USBC_UPD350B_MANUFACTURER_STR
 
 /***********************************Port Specific configuration***********************/    
 
@@ -63,40 +63,38 @@ Rp Value (Bit 4:3) 0 -Rd(Sink), 1-Default USB Rp, 2- 1.5A Rp, 3-3.0A Rp
 Port Enable (Bit 5) 0- Port Disable; 1- Port Enable
 VCONN OCS Enable (Bit 9) 0- Disable, 1-Enable 
 Power Data State for FRS (Bit 12:11) 0 - FRS Disabled for Port, 1 - FRS only in Sink/Data Host, 2 - FRS only in Source/Data Device */
-#define CFG_PORT_0_CFG_DATA                  CONFIG_CFG_PORT_0_CFG_DATA
+#define CFG_PORT_0_CFG_DATA                         CONFIG_MC2_USBC_UPD350B_PORT_0_CFG_DATA
 
 /********************************PIO Specific configuration******************************/
-#define CFG_PORT_0_UPD_FAULT_IN_PIO_NO       eUPD_PIO5
-#define CFG_PORT_0_UPD_FAULT_IN_MODE         eINPUT_ACTIVE_LOW
-#define CFG_PORT_0_UPD_EN_VBUS               eUPD_PIO3
-#define CFG_PORT_0_UPD_EN_VBUS_PIO_MODE      ePUSH_PULL_ACTIVE_HIGH
-
-
+#define CFG_PORT_0_UPD_FAULT_IN_PIO_NO              eUPD_PIO5
+#define CFG_PORT_0_UPD_FAULT_IN_MODE                eINPUT_ACTIVE_LOW
+#define CFG_PORT_0_UPD_EN_VBUS                      eUPD_PIO3
+#define CFG_PORT_0_UPD_EN_VBUS_PIO_MODE             ePUSH_PULL_ACTIVE_HIGH
 
 /**********************Fault Related configuration**************************/
-#define CFG_PORT_0_OVER_VOLTAGE_FACTOR              CONFIG_CFG_PORT_0_OVER_VOLTAGE_FACTOR
-#define CFG_PORT_0_UNDER_VOLTAGE_FACTOR             CONFIG_CFG_PORT_0_UNDER_VOLTAGE_FACTOR
-#define CFG_PORT_0_FAULT_IN_OCS_DEBOUNCE_MS         CONFIG_CFG_PORT_0_FAULT_IN_OCS_DEBOUNCE_MS
-#define CFG_PORT_0_VCONN_OCS_DEBOUNCE_IN_MS         CONFIG_CFG_PORT_0_VCONN_OCS_DEBOUNCE_IN_MS
-#define CFG_PORT_0_MAX_VBUS_POWER_FAULT_COUNT       CONFIG_CFG_PORT_0_MAX_VBUS_POWER_FAULT_COUNT
-#define CFG_PORT_0_MAX_VCONN_FAULT_COUNT            CONFIG_CFG_PORT_0_MAX_VCONN_FAULT_COUNT
-#define CFG_PORT_0_POWER_GOOD_TIMER_MS              CONFIG_CFG_PORT_0_POWER_GOOD_TIMER_MS
-#define CFG_PORT_0_MAX_PORT_CURRENT_IN_10mA         CONFIG_CFG_PORT_0_MAX_PORT_CURRENT_IN_10mA
+#define CFG_PORT_0_OVER_VOLTAGE_FACTOR              CONFIG_MC2_USBC_UPD350B_PORT_0_OVER_VOLTAGE_FACTOR
+#define CFG_PORT_0_UNDER_VOLTAGE_FACTOR             CONFIG_MC2_USBC_UPD350B_PORT_0_UNDER_VOLTAGE_FACTOR
+#define CFG_PORT_0_FAULT_IN_OCS_DEBOUNCE_MS         CONFIG_MC2_USBC_UPD350B_PORT_0_FAULT_IN_OCS_DEBOUNCE_MS
+#define CFG_PORT_0_VCONN_OCS_DEBOUNCE_IN_MS         CONFIG_MC2_USBC_UPD350B_PORT_0_VCONN_OCS_DEBOUNCE_IN_MS
+#define CFG_PORT_0_MAX_VBUS_POWER_FAULT_COUNT       CONFIG_MC2_USBC_UPD350B_PORT_0_MAX_VBUS_POWER_FAULT_COUNT
+#define CFG_PORT_0_MAX_VCONN_FAULT_COUNT            CONFIG_MC2_USBC_UPD350B_PORT_0_MAX_VCONN_FAULT_COUNT
+#define CFG_PORT_0_POWER_GOOD_TIMER_MS              CONFIG_MC2_USBC_UPD350B_PORT_0_POWER_GOOD_TIMER_MS
+#define CFG_PORT_0_MAX_PORT_CURRENT_IN_10mA         CONFIG_MC2_USBC_UPD350B_PORT_0_MAX_PORT_CURRENT_IN_10mA
 
 /*********************************************************************************/
 /*********************************PDO Configuration ******************************/
 /*********************************************************************************/
 
 /******************************Source PDO Configuration***************************/
-#define CFG_PORT_0_SOURCE_NUM_OF_PDOS     CONFIG_CFG_PORT_0_SOURCE_NUM_OF_PDOS
+#define CFG_PORT_0_SOURCE_NUM_OF_PDOS               CONFIG_MC2_USBC_UPD350B_PORT_0_SOURCE_NUM_OF_PDOS
 
-#define CFG_PORT_0_SOURCE_PDO_1           CONFIG_CFG_PORT_0_SOURCE_PDO_1
-#define CFG_PORT_0_SOURCE_PDO_2           CONFIG_CFG_PORT_0_SOURCE_PDO_2
-#define CFG_PORT_0_SOURCE_PDO_3           CONFIG_CFG_PORT_0_SOURCE_PDO_3
-#define CFG_PORT_0_SOURCE_PDO_4           CONFIG_CFG_PORT_0_SOURCE_PDO_4
+#define CFG_PORT_0_SOURCE_PDO_1                     CONFIG_MC2_USBC_UPD350B_PORT_0_SOURCE_PDO_1
+#define CFG_PORT_0_SOURCE_PDO_2                     CONFIG_MC2_USBC_UPD350B_PORT_0_SOURCE_PDO_2
+#define CFG_PORT_0_SOURCE_PDO_3                     CONFIG_MC2_USBC_UPD350B_PORT_0_SOURCE_PDO_3
+#define CFG_PORT_0_SOURCE_PDO_4                     CONFIG_MC2_USBC_UPD350B_PORT_0_SOURCE_PDO_4
 
 /**************************Role Swap Policy defines*****************************/
-#define CFG_PORT_0_ROLE_SWAP_POLICY       CONFIG_CFG_PORT_0_ROLE_SWAP_POLICY  
+#define CFG_PORT_0_ROLE_SWAP_POLICY                 CONFIG_MC2_USBC_UPD350B_PORT_0_ROLE_SWAP_POLICY  
 
 /*********************** Feature Select Defines *************************************/
 /* Note: The CFG_PORT_0_FEATURE_SELECT is a bit mapped entry consisting of the following
@@ -104,7 +102,7 @@ Port Specific Configurations
 Power Balancing Enable (Bit 0) 0 - Disable, 1 - Enable
 VDM Support Enable (Bit 1) 0 - Disable, 1 - Enable
 Alt Mode Entry Point Enable (Bit 2) 0 - Disable, 1 - Enable */
-#define CFG_PORT_0_FEATURE_SELECT         CONFIG_CFG_PORT_0_FEATURE_SELECT
+#define CFG_PORT_0_FEATURE_SELECT                   CONFIG_MC2_USBC_UPD350B_PORT_0_FEATURE_SELECT
 
 /*************************************************************************************/
 /**************************************Port 1 Configurations**************************/
@@ -119,40 +117,40 @@ Rp Value (Bit 4:3) 0 -Rd(Sink), 1-Default USB Rp, 2- 1.5A Rp, 3-3.0A Rp
 Port Enable (Bit 5) 0- Port Disable; 1- Port Enable
 VCONN OCS Enable (Bit 9) 0- Disable, 1-Enable 
 Power Data State for FRS (Bit 12:11) 0 - FRS Disabled for Port, 1 - FRS only in Sink/Data Host, 2 - FRS only in Source/Data Device */
-#define CFG_PORT_1_CFG_DATA                  0x239U
+#define CFG_PORT_1_CFG_DATA                         CONFIG_MC2_USBC_UPD350B_PORT_1_CFG_DATA
 
 /********************************PIO Specific configuration******************************/
-#define CFG_PORT_1_UPD_FAULT_IN_PIO_NO       eUPD_PIO5
-#define CFG_PORT_1_UPD_FAULT_IN_MODE         eINPUT_ACTIVE_LOW
-#define CFG_PORT_1_UPD_EN_VBUS               eUPD_PIO3
-#define CFG_PORT_1_UPD_EN_VBUS_PIO_MODE      ePUSH_PULL_ACTIVE_HIGH
+#define CFG_PORT_1_UPD_FAULT_IN_PIO_NO              eUPD_PIO5
+#define CFG_PORT_1_UPD_FAULT_IN_MODE                eINPUT_ACTIVE_LOW
+#define CFG_PORT_1_UPD_EN_VBUS                      eUPD_PIO3
+#define CFG_PORT_1_UPD_EN_VBUS_PIO_MODE             ePUSH_PULL_ACTIVE_HIGH
 
 
 
 /**********************Fault Related configuration**************************/
-#define CFG_PORT_1_OVER_VOLTAGE_FACTOR              115U
-#define CFG_PORT_1_UNDER_VOLTAGE_FACTOR             85U
-#define CFG_PORT_1_FAULT_IN_OCS_DEBOUNCE_MS         5U
-#define CFG_PORT_1_VCONN_OCS_DEBOUNCE_IN_MS         2U
-#define CFG_PORT_1_MAX_VBUS_POWER_FAULT_COUNT       3U
-#define CFG_PORT_1_MAX_VCONN_FAULT_COUNT            3U
-#define CFG_PORT_1_POWER_GOOD_TIMER_MS              10000U
-#define CFG_PORT_1_MAX_PORT_CURRENT_IN_10mA         300U
+#define CFG_PORT_1_OVER_VOLTAGE_FACTOR              CONFIG_MC2_USBC_UPD350B_PORT_1_OVER_VOLTAGE_FACTOR
+#define CFG_PORT_1_UNDER_VOLTAGE_FACTOR             CONFIG_MC2_USBC_UPD350B_PORT_1_UNDER_VOLTAGE_FACTOR
+#define CFG_PORT_1_FAULT_IN_OCS_DEBOUNCE_MS         CONFIG_MC2_USBC_UPD350B_PORT_1_FAULT_IN_OCS_DEBOUNCE_MS
+#define CFG_PORT_1_VCONN_OCS_DEBOUNCE_IN_MS         CONFIG_MC2_USBC_UPD350B_PORT_1_VCONN_OCS_DEBOUNCE_IN_MS
+#define CFG_PORT_1_MAX_VBUS_POWER_FAULT_COUNT       CONFIG_MC2_USBC_UPD350B_PORT_1_MAX_VBUS_POWER_FAULT_COUNT
+#define CFG_PORT_1_MAX_VCONN_FAULT_COUNT            CONFIG_MC2_USBC_UPD350B_PORT_1_MAX_VCONN_FAULT_COUNT
+#define CFG_PORT_1_POWER_GOOD_TIMER_MS              CONFIG_MC2_USBC_UPD350B_PORT_1_POWER_GOOD_TIMER_MS
+#define CFG_PORT_1_MAX_PORT_CURRENT_IN_10mA         CONFIG_MC2_USBC_UPD350B_PORT_1_MAX_PORT_CURRENT_IN_10mA
 
 /*********************************************************************************/
 /*********************************PDO Configuration ******************************/
 /*********************************************************************************/
 
 /******************************Source PDO Configuration***************************/
-#define CFG_PORT_1_SOURCE_NUM_OF_PDOS     4U
+#define CFG_PORT_1_SOURCE_NUM_OF_PDOS               CONFIG_MC2_USBC_UPD350B_PORT_1_SOURCE_NUM_OF_PDOS
 
-#define CFG_PORT_1_SOURCE_PDO_1           0x801912cU
-#define CFG_PORT_1_SOURCE_PDO_2           0x2d12cU
-#define CFG_PORT_1_SOURCE_PDO_3           0x4b12cU
-#define CFG_PORT_1_SOURCE_PDO_4           0x6412cU
+#define CFG_PORT_1_SOURCE_PDO_1                     CONFIG_MC2_USBC_UPD350B_PORT_1_SOURCE_PDO_1
+#define CFG_PORT_1_SOURCE_PDO_2                     CONFIG_MC2_USBC_UPD350B_PORT_1_SOURCE_PDO_2
+#define CFG_PORT_1_SOURCE_PDO_3                     CONFIG_MC2_USBC_UPD350B_PORT_1_SOURCE_PDO_3
+#define CFG_PORT_1_SOURCE_PDO_4                     CONFIG_MC2_USBC_UPD350B_PORT_1_SOURCE_PDO_4
 
 /**************************Role Swap Policy defines*****************************/
-#define CFG_PORT_1_ROLE_SWAP_POLICY       0xc00U  
+#define CFG_PORT_1_ROLE_SWAP_POLICY                 CONFIG_MC2_USBC_UPD350B_PORT_1_ROLE_SWAP_POLICY  
 
 /*********************** Feature Select Defines *************************************/
 /* Note: The CFG_PORT_1_FEATURE_SELECT is a bit mapped entry consisting of the following
@@ -160,7 +158,7 @@ Port Specific Configurations
 Power Balancing Enable (Bit 0) 0 - Disable, 1 - Enable
 VDM Support Enable (Bit 1) 0 - Disable, 1 - Enable
 Alt Mode Entry Point Enable (Bit 2) 0 - Disable, 1 - Enable */
-#define CFG_PORT_1_FEATURE_SELECT         0x0U
+#define CFG_PORT_1_FEATURE_SELECT                   CONFIG_MC2_USBC_UPD350B_PORT_1_FEATURE_SELECT
 
 
 /*****************Defines to form PDOs ****************************************/
