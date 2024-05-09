@@ -23,5 +23,7 @@ int PSF_APP_MemCmp(const void* ptr1, const void* ptr2, int len);
 // Debug hook implementations
 void PSF_APP_USART_Drv_Initialize();
 void PSF_APP_UART_Write_String(char* msg);
+void PSF_APP_UART_Write_Char(char c);
+void PSF_APP_UART_Write_Int(uint32_t i, uint8_t width);
 
 #endif //__MC2_ZEPHYR_DRIVERS_UPD350B_PLATFORM_INTEGRATION_H

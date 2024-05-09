@@ -32,6 +32,7 @@ HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 *******************************************************************************/
 
 #include <psf_stdinc.h>
+#include <zephyr/kernel.h>
 
 /***************************************************************************************************/
 
@@ -494,8 +495,10 @@ UINT8 PRL_TransmitMsg (UINT8 u8PortNum, UINT8 u8SOPType, UINT32 u32Header, UINT8
 	do
 	{
 		u8OKToTx = UPD_RegReadByte (u8PortNum, PRL_TX_CTL_B);
+#if CONFIG_MC2_USBC_UPD350B_USE_K_TIMER
+		k_msleep(1);
+#endif
 	}
-	
 	while (!(u8OKToTx & PRL_TX_CTL_B_OK_TO_TX));
 	
 	DEBUG_PRINT_PORT_STR (PSF_PROTOCOL_TYPEC_LAYER_DEBUG_MSG,u8PortNum,"PRL: Tx Msg sent on line\r\n");
@@ -1755,6 +1758,9 @@ void PRL_ConfigureBISTCarrierMode (UINT8 u8PortNum, UINT8 u8BISTCarriermode)
 		do
 		{
 			u8OKToTx = UPD_RegReadByte (u8PortNum, PRL_TX_CTL_B);
+#if CONFIG_MC2_USBC_UPD350B_USE_K_TIMER
+			k_msleep(1);
+#endif
 		}while (!(u8OKToTx & PRL_TX_CTL_B_OK_TO_TX));
 		
 	  	/* BIST Tx is reset*/

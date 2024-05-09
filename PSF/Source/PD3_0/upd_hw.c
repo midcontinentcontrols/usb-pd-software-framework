@@ -853,7 +853,9 @@ void UPD_CheckAndDisablePorts (void)
                     DPM_DISABLE_CONFIGURED_PORT_EN(u8PortNum);
                 }   /*end of UPD_SPI_TEST_VAL check if else*/
 #endif            
+#if CONFIG_MC2_USBC_UPD350B_USE_K_TIMER
                 k_msleep(1);
+#endif
             } /* end of while*/
             /*kill the timer if the UPD is identified.*/
             PDTimer_Kill (u8TimerID);

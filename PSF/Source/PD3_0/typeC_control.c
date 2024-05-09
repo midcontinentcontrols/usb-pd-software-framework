@@ -2233,7 +2233,9 @@ void TypeC_ConfigCCComp (UINT8 u8PortNum, UINT8 u8ConfigVal)
     do
     {
         UPD_RegisterRead (u8PortNum, TYPEC_CC_HW_CTL_HIGH, &u8Data, BYTE_LEN_1);
+#if CONFIG_MC2_USBC_UPD350B_USE_K_TIMER
         k_msleep(1);
+#endif        
     }while((u8Data & TYPEC_CC_DB_ACTIVE) == u8DesiredDBState); 
     
 }
@@ -3355,7 +3357,9 @@ void TypeC_SetVBUSCompONOFF (UINT8 u8PortNum, UINT8 u8ConfigVal)
     do
     {
         UPD_RegisterRead (u8PortNum, TYPEC_VBUS_CTL1_LOW, &u8Data, BYTE_LEN_1);
+#if CONFIG_MC2_USBC_UPD350B_USE_K_TIMER
         k_msleep(1);
+#endif
     }while((u8Data & TYPEC_VBUS_DB_ACTIVE)  == u8DesiredDBState);
 }
 /**************************************************************/

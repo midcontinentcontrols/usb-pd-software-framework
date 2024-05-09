@@ -31,6 +31,7 @@ HAVE PAID DIRECTLY TO MICROCHIP FOR THIS SOFTWARE.
 *******************************************************************************/
 
 #include <psf_stdinc.h>
+#include <zephyr/kernel.h>
 
 void UPDIntr_AlertHandler (UINT8 u8PortNum)
 {
@@ -62,6 +63,9 @@ void UPDIntr_AlertHandler (UINT8 u8PortNum)
                 {
                     break;
                 }
+#if CONFIG_MC2_USBC_UPD350B_USE_K_TIMER
+                k_msleep(1);
+#endif
             }
         }
 #endif
